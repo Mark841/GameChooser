@@ -115,11 +115,15 @@ void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, int driveIndex)
 }
 
 //TODO
-void BackEndAlgorithms::FindStore(std::string store, std::string* location)
+bool BackEndAlgorithms::FindStore(std::string store, std::string* location, bool found)
 {
     if (!std::filesystem::is_directory(*location))
     {
-        return;
+        return false;
+    }
+    if (found)
+    {
+        return true;
     }
 
     // Creates a list to hold all sub folders
@@ -127,8 +131,15 @@ void BackEndAlgorithms::FindStore(std::string store, std::string* location)
     std::filesystem::path folder = std::filesystem::path(*location);
 
     //std::cout << *location << std::endl;
+
     try
     {
+        if (std::filesystem::is_directory(folder) && IsSubDirectoryName(*location, store)) // Need to cehck if the filename CONTAINS store and not is directly equal to because it will have the extension at the end
+        {
+            location = new std::string(folder.string());
+            return true;
+        }
+
         for (const auto& entry : std::filesystem::directory_iterator(*location))
         {
             if (IsPathWhitelisted(entry.path().string()))
@@ -137,7 +148,7 @@ void BackEndAlgorithms::FindStore(std::string store, std::string* location)
             }
 
             // -----------------------------------------------------------------------------------
-            std::cout << entry.path() << std::endl;
+            //std::cout << entry.path() << std::endl;
             // -----------------------------------------------------------------------------------
 
             if (std::filesystem::is_directory(entry))
@@ -147,40 +158,50 @@ void BackEndAlgorithms::FindStore(std::string store, std::string* location)
             // checks if the store was found and 'else if' because don't want to say it's found if it was a subfolder
             // -----------------------------------------------------------------------------------
             // NEED A METHOD TO GET THE ACTUAL FILE NAME FROM entry.path()
-            else if (entry.path().string().find(store) != std::string_view::npos) // Need to cehck if the filename CONTAINS store and not is directly equal to because it will have the extension at the end
+            else if (IsSubDirectoryName(entry.path().string(), store)) // Need to check if the filename CONTAINS store and not is directly equal to because it will have the extension at the end
             {
-                *location += "\\" + entry.path().string();
-                return;
+                location = new std::string(entry.path().string());
+                return true;
             }
             // -----------------------------------------------------------------------------------
         }
-
-        // for each sub folder
-        for (std::filesystem::path sf : subFolders) {
-            // call the function again
-            std::string subFolder = sf.string();
-            FindStore(store, &subFolder);
-        }
-        return;
     }
+
     catch (std::filesystem::filesystem_error ex)
     {
-        return;
+        return false;
     }
+
+    // for each sub folder call the function again
+    for (std::filesystem::path sf : subFolders) 
+    {
+        if ((std::filesystem::status(sf).permissions() | std::filesystem::perms::others_read) == std::filesystem::status(sf).permissions())
+        {
+            std::string subFolder = sf.string();
+            if (FindStore(store, &subFolder))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool BackEndAlgorithms::IsPathWhitelisted(const std::string path)
 {
     if (//entry.path().string() == "C://hiberfil.sys"
         // || entry.path().string() == "C://swapfile.sys"
-        IsSubpath(path, "hiberfil.sys")
-        || IsSubpath(path, "swapfile.sys")
+        IsSubpath(path, "hiberfil")
+        || IsSubpath(path, "swapfile")
+        || IsSubpath(path, "pagefile")
+        || IsSubpath(path, "DumpStack")
         || IsSubpath(path, "Adobe")
         || IsSubpath(path, "Android")
         || IsSubpath(path, "Apple")
         || IsSubpath(path, "MinGW")
         || IsSubpath(path, "Microsoft")
         || IsSubpath(path, "ProgramData")
+        || IsSubpath(path, "RivaTuner")
         || IsSubpath(path, "temp")
         || IsSubpath(path, "Users")
         || IsSubpath(path, "Windows")
@@ -196,10 +217,19 @@ bool BackEndAlgorithms::IsSubpath(const std::filesystem::path& path, const std::
     const auto mismatch_pair = std::mismatch(path.begin(), path.end(), base.begin(), base.end());
     return mismatch_pair.second == base.end();
 }
-
 bool BackEndAlgorithms::IsSubpath(const std::string path, const std::string subpath)
 {
     return path.find(subpath) != std::string_view::npos;
+}
+bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const std::string subdirectory)
+{
+    int index = directory.length() - subdirectory.length();
+    if (index < 0)
+    {
+        return false;
+    }
+
+    return directory.substr(index)._Equal(subdirectory);
 }
 
 // -----------------------------------------------------------------------------------
@@ -211,10 +241,9 @@ bool BackEndAlgorithms::IsSubpath(const std::string path, const std::string subp
 void BackEndAlgorithms::SteamStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::string* location = new std::string(*drive + "://");
+    std::string* location = new std::string(*drive + ":\\");
 
-    FindStore("Steam", location);
-    if (*location == "")
+    if (!FindStore("Steam", location))
     {
         FindStore("SteamLibrary", location);
     }

@@ -58,11 +58,12 @@ private:
 
 	void FindStoresOnAllDrives();
 	void FindStoresOnDrive(StoresFile* localData, int driveIndex);
-	void FindStore(std::string store, std::string* location);
+	bool FindStore(std::string store, std::string* location, bool found = false);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
 	bool IsSubpath(const std::string path, const std::string subpath);
+	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
 	void SteamStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
 	void OriginStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
