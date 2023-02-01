@@ -1,17 +1,18 @@
 #pragma once
-#include <vector>
 #include "FileManager.h"
+#include "BackEndAlgorithms.h"
+#include <vector>
 
 class AppendToFile : public FileManager
 {
 public:
-	AppendToFile(const string fileName);
+	AppendToFile(const std::string fileName);
 	~AppendToFile();
 
-	void AddToFile(const string value);
-	void AddToFile(const string value1, const string value2);
+	void AddToFile(const std::string value);
+	void AddToFile(const std::string value1, const std::string value2);
 
 	void ReadFromFile();
-	void GetDataFromFile();
-	vector<string> GetValues();
+	void LoadDataFromFile();
+	std::vector<std::string> GetValues();
 };

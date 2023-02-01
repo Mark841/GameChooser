@@ -1,6 +1,4 @@
 #include "ConsoleGUI.h"
-#include "BackEndAlgorithms.h"
-#include <iostream>
 
 //TODO
 ConsoleGUI::ConsoleGUI()
@@ -79,6 +77,14 @@ int ConsoleGUI::DisplayScanByDrive()
 	std::cout << "Please enter a numbered option: ";
 	std::cin >> userInput;
 
+	// -------------------------------------------------------------------------------
+	//TODO
+	/*
+	* Ask the user what the folders/directory names are for where their games/stores are stored for each store/platform
+	   eg. SteamLibrary, SteamGames, Steam, or so on
+	*/
+	// -------------------------------------------------------------------------------
+
 	while (userInput < 0 || userInput > 3)
 	{
 		std::cout << "Please enter a valid option: ";
@@ -89,7 +95,7 @@ int ConsoleGUI::DisplayScanByDrive()
 	case 1:
 	{
 		std::cout << "Scan system for stores (by drive or all drives) has been selected" << std::endl;
-		std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
+		std::vector<char> allDrives = algorithms->GetDriveNames();
 		char driveName = NULL;
 		std::cout << "Please enter a drive to scan, your current drives are: " << std::endl;
 		for (char drive : allDrives)
@@ -105,12 +111,12 @@ int ConsoleGUI::DisplayScanByDrive()
 			std::cin >> driveName;
 		}
 
-		BackEndAlgorithms::ScanDrive(driveName);
+		algorithms->ScanDrive(driveName);
 		break;
 	}
 	case 2:
 		std::cout << "Specify store or game folder locations has been selected" << std::endl;
-		BackEndAlgorithms::ScanAllDrives();
+		algorithms->ScanAllDrives();
 		break;
 	case 3:
 		std::cout << "Returning to Main Menu" << std::endl; 

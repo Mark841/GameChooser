@@ -1,5 +1,6 @@
 #pragma once
 #include "GUIInterface.h"
+#include <iostream>
 
 class ConsoleGUI : GUIInterface
 {

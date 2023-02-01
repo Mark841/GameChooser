@@ -4,9 +4,9 @@
 class WriteToFile : public FileManager
 {
 public:
-	WriteToFile(const string fileName);
+	WriteToFile(const std::string fileName);
 	~WriteToFile();
 
-	void AddToFile(const string value);
+	void AddToFile(const std::string value);
 };
 

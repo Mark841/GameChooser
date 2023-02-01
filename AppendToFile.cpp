@@ -1,47 +1,38 @@
 #include "AppendToFile.h"
 
-AppendToFile::AppendToFile(const string fileName) : FileManager(fileName, 1)
+AppendToFile::AppendToFile(const std::string fileName) : FileManager(fileName, 1)
 {
-	GetDataFromFile();
+	LoadDataFromFile();
 }
 AppendToFile::~AppendToFile()
 {
 }
 
-//TODO
+//TODO - Clauses for if file is empty then fill it
 void AppendToFile::ReadFromFile()
 {
-	string next_line;
+	std::string next_line;
 	dataFile.clear();
-	dataFile.seekg(0, ios::beg);
+	dataFile.seekg(0, std::ios::beg);
 
 	while (getline(dataFile, next_line))
-		cout << next_line << endl;
+		std::cout << next_line << std::endl;
+
+	//BackEndAlgorithms::GetInstance()->SetLocalData();
 }
-//TODO
-void AppendToFile::GetDataFromFile()
+//TODO - Clauses for if file is empty then fill it
+void AppendToFile::LoadDataFromFile()
 {
-	localFileData.amountOfDrives;
-	localFileData.driveNames;
-	localFileData.fileExists;
-	localFileData.folderLocationsOnDrive;
-	localFileData.isFolderOnDrive;
-	localFileData.numberOfFoldersOnDrive;
-	localFileData.lastPlayed;
-	localFileData.storeAmount;
-	localFileData.storeLocationsOnDrive;
-	localFileData.isStoreOnDrive;
-	localFileData.numberOfStoresOnDrive;
 }
 
-//TODO
-vector<string> AppendToFile::GetValues()
+//TODO - Clauses for if file is empty then fill it
+std::vector<std::string> AppendToFile::GetValues()
 {
-	vector<string> values;
-	string next_line;
+	std::vector<std::string> values;
+	std::string next_line;
 
 	dataFile.clear();
-	dataFile.seekg(0, ios::beg);
+	dataFile.seekg(0, std::ios::beg);
 
 	int count = 0;
 	while (getline(dataFile, next_line))
@@ -50,16 +41,16 @@ vector<string> AppendToFile::GetValues()
 }
 
 //TODO
-void AppendToFile::AddToFile(const string value)
+void AppendToFile::AddToFile(const std::string value)
 {
 	dataFile.clear();
-	dataFile.seekg(0, ios::end);
+	dataFile.seekg(0, std::ios::end);
 	dataFile << value << "\n";
 }
 //TODO
-void AppendToFile::AddToFile(const string value1, const string value2)
+void AppendToFile::AddToFile(const std::string value1, const std::string value2)
 {
 	dataFile.clear();
-	dataFile.seekg(0, ios::end);
+	dataFile.seekg(0, std::ios::end);
 	dataFile << value1 << " " << value2 << "\n";
 }

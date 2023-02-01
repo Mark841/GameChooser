@@ -1,12 +1,28 @@
 #pragma once
 #include "AppendToFile.h"
 #include "WriteToFile.h"
+#include "BackEndAlgorithms.h"
+
+enum class handlerType
+{
+	APPEND,
+	WRITE
+};
 
 class GUIInterface abstract
 {
 public:
-	GUIInterface() { fileHandler = new AppendToFile("GameStores.txt"); }
-	~GUIInterface() { delete fileHandler; }
+	GUIInterface() {
+		fileHandler = new AppendToFile("GameStores.txt");
+		fileHandlerAppend = static_cast<AppendToFile*>(fileHandler);
+		fileHandlerAppend->LoadDataFromFile();
+		algorithms = BackEndAlgorithms::GetInstance();
+		if (!algorithms->GetLocalData()->exists) algorithms->FindStoresOnAllDrivesNoLocalData();
+	}
+	~GUIInterface() {
+		delete fileHandler;
+		delete algorithms;
+	}
 
 	void SwapFileHandlerModeToAppend() { delete fileHandler;  fileHandler = new AppendToFile("GameStores.txt"); }
 	void SwapFileHandlerModeToWrite() { delete fileHandler;  fileHandler = new WriteToFile("GameStores.txt"); }
@@ -18,6 +34,11 @@ public:
 	virtual int DisplayStores() = 0;
 	virtual int DisplayStoresWithSearch() = 0;
 
-private:
-	FileManager* fileHandler;
+	handlerType currentFileHandlerMode = handlerType::APPEND;
+
+protected:
+	FileManager* fileHandler = nullptr;
+	AppendToFile* fileHandlerAppend = nullptr;
+	WriteToFile* fileHandlerWriter = nullptr;
+	BackEndAlgorithms* algorithms = nullptr;
 };
