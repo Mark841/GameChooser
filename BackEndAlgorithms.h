@@ -58,7 +58,7 @@ private:
 
 	void FindStoresOnAllDrives();
 	void FindStoresOnDrive(StoresFile* localData, int driveIndex);
-	bool FindStore(std::string store, std::string* location, bool found = false);
+	bool FindStore(std::string directoryName, std::string* currentSearchDirectoryPath, std::string* foundLocationPath, bool found = false);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);

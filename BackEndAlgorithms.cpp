@@ -67,19 +67,30 @@ void BackEndAlgorithms::FindStoresOnAllDrivesNoLocalData()
 {
     std::vector<char> drives = GetDriveNames();
 
+    localFileData->storeAmount = 4;
     localFileData->amountOfDrives = drives.size();
-    localFileData->driveNames.resize(drives.size());
-    localFileData->numberOfStoresOnDrive.resize(drives.size());
-    localFileData->numberOfFoldersOnDrive.resize(drives.size());
-    localFileData->folderLocationsOnDrive.resize(drives.size());
-    localFileData->storeLocationsOnDrive.resize(drives.size());
-    localFileData->isFolderOnDrive.resize(drives.size());
-    localFileData->isStoreOnDrive.resize(drives.size());
 
-    for (int drivesIndex = 0; drivesIndex < drives.size(); drivesIndex++)
+    localFileData->driveNames.resize(localFileData->amountOfDrives);
+    localFileData->numberOfStoresOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->numberOfFoldersOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->folderLocationsOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->storeLocationsOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->isFolderOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->isStoreOnDrive.resize(localFileData->amountOfDrives);
+
+    for (int i = 0; i < localFileData->amountOfDrives; i++)
+    {
+        (localFileData->folderLocationsOnDrive[i]).resize(localFileData->storeAmount);
+        (localFileData->storeLocationsOnDrive[i]).resize(localFileData->storeAmount);
+        (localFileData->isFolderOnDrive[i]).resize(localFileData->storeAmount);
+        (localFileData->isStoreOnDrive[i]).resize(localFileData->storeAmount);
+    }
+
+    for (int drivesIndex = 0; drivesIndex < localFileData->amountOfDrives; drivesIndex++)
     {
         localFileData->driveNames[drivesIndex] = drives[drivesIndex];
         FindStoresOnDrive(localFileData, drivesIndex);
+        std::cout << "Scanned drive: " << drivesIndex + 1 << "\n\tPercentage complete: " << ((drivesIndex + 1) * 100) / localFileData->amountOfDrives << std::endl;
     }
 
     localFileData->exists = true;
@@ -114,17 +125,23 @@ void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, int driveIndex)
     localData->numberOfFoldersOnDrive[driveIndex] = *noOfFolders;
 }
 
-//TODO
-bool BackEndAlgorithms::FindStore(std::string store, std::string* location, bool found)
+/*
+Possible way to speed up is able to enter multiple search names,  
+eg. Steam or SteamLibrary 
+
+so don't have to search through the same directories twice, saving half the time
+*/
+
+bool BackEndAlgorithms::FindStore(std::string directoryName, std::string* location, std::string* foundLocation, bool found)
 {
     if (!std::filesystem::is_directory(*location))
     {
         return false;
     }
-    if (found)
+   /* if (found)
     {
         return true;
-    }
+    }*/
 
     // Creates a list to hold all sub folders
     std::vector<std::filesystem::path> subFolders;
@@ -134,9 +151,9 @@ bool BackEndAlgorithms::FindStore(std::string store, std::string* location, bool
 
     try
     {
-        if (std::filesystem::is_directory(folder) && IsSubDirectoryName(*location, store)) // Need to cehck if the filename CONTAINS store and not is directly equal to because it will have the extension at the end
+        if (std::filesystem::is_directory(folder) && IsSubDirectoryName(*location, directoryName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
         {
-            location = new std::string(folder.string());
+            *foundLocation = std::string(folder.string());
             return true;
         }
 
@@ -158,11 +175,11 @@ bool BackEndAlgorithms::FindStore(std::string store, std::string* location, bool
             // checks if the store was found and 'else if' because don't want to say it's found if it was a subfolder
             // -----------------------------------------------------------------------------------
             // NEED A METHOD TO GET THE ACTUAL FILE NAME FROM entry.path()
-            else if (IsSubDirectoryName(entry.path().string(), store)) // Need to check if the filename CONTAINS store and not is directly equal to because it will have the extension at the end
-            {
-                location = new std::string(entry.path().string());
-                return true;
-            }
+            //else if (IsSubDirectoryName(entry.path().string(), store)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
+            //{
+            //    *foundLocation = std::string(entry.path().string());
+            //    return true;
+            //}
             // -----------------------------------------------------------------------------------
         }
     }
@@ -178,7 +195,7 @@ bool BackEndAlgorithms::FindStore(std::string store, std::string* location, bool
         if ((std::filesystem::status(sf).permissions() | std::filesystem::perms::others_read) == std::filesystem::status(sf).permissions())
         {
             std::string subFolder = sf.string();
-            if (FindStore(store, &subFolder))
+            if (FindStore(directoryName, &subFolder, foundLocation))
             {
                 return true;
             }
@@ -198,12 +215,19 @@ bool BackEndAlgorithms::IsPathWhitelisted(const std::string path)
         || IsSubpath(path, "Adobe")
         || IsSubpath(path, "Android")
         || IsSubpath(path, "Apple")
+        //|| IsSubpath(path, "lang")
+        //|| IsSubpath(path, "Languages")
         || IsSubpath(path, "MinGW")
         || IsSubpath(path, "Microsoft")
+        || IsSubpath(path, "Music")
+        || IsSubpath(path, "Phone")
+        || IsSubpath(path, "Photos")
         || IsSubpath(path, "ProgramData")
         || IsSubpath(path, "RivaTuner")
+        || IsSubpath(path, "steamapps")
         || IsSubpath(path, "temp")
         || IsSubpath(path, "Users")
+        || IsSubpath(path, "Videos")
         || IsSubpath(path, "Windows")
         || IsSubpath(path, "$Recycle.Bin"))
     {
@@ -241,83 +265,99 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
 void BackEndAlgorithms::SteamStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::string* location = new std::string(*drive + ":\\");
+    std::string* currentSearchDirectoryPath = new std::string(*drive + ":\\");
+    std::string* foundLocation = new std::string("");
 
-    if (!FindStore("Steam", location))
+    if (!FindStore("Steam", currentSearchDirectoryPath, foundLocation))
     {
-        FindStore("SteamLibrary", location);
+        FindStore("SteamLibrary", currentSearchDirectoryPath, foundLocation);
     }
 
-    if (*location != "") {
-        localData->folderLocationsOnDrive[driveIndex][0] = *location;
+    if (*foundLocation != "") {
+        localData->folderLocationsOnDrive[driveIndex][0] = *foundLocation;
         localData->isFolderOnDrive[driveIndex][0] = true;
         (*noOfFolders)++;
     }
-    if (std::filesystem::exists(*location + "\\Steam.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][0] = *location;
+    if (std::filesystem::exists(*foundLocation + "\\Steam.exe")) {
+        localData->storeLocationsOnDrive[driveIndex][0] = *foundLocation;
         localData->isStoreOnDrive[driveIndex][0] = true;
         (*noOfStores)++;
     }
+    delete currentSearchDirectoryPath;
+    delete foundLocation;
 }
 void BackEndAlgorithms::OriginStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::string* location = new std::string(*drive + "://");
+    std::string* currentSearchDirectoryPath = new std::string(*drive + "://");
+    std::string* foundLocation = new std::string("");
 
-    FindStore("Origin", location);
-    if (std::filesystem::exists(*location + "\\Origin.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][1] = *location;
+    FindStore("Origin", currentSearchDirectoryPath, foundLocation);
+    if (std::filesystem::exists(*foundLocation + "\\Origin.exe")) {
+        localData->storeLocationsOnDrive[driveIndex][1] = *foundLocation;
         localData->isStoreOnDrive[driveIndex][1] = true;
         (*noOfStores)++;
     }
-    else if (*location != "") {
-        localData->folderLocationsOnDrive[driveIndex][1] = *location;
+    else if (*foundLocation != "") {
+        localData->folderLocationsOnDrive[driveIndex][1] = *foundLocation;
         localData->isFolderOnDrive[driveIndex][1] = true;
         (*noOfFolders)++;
     }
-    *location = *drive + "://";
-    FindStore("Origin Games", location);
-    if (*location != "") {
-        localData->folderLocationsOnDrive[driveIndex][1] = *location;
+    *currentSearchDirectoryPath = *drive + "://";
+    *foundLocation = "";
+
+    FindStore("Origin Games", currentSearchDirectoryPath, foundLocation);
+    if (*foundLocation != "") {
+        localData->folderLocationsOnDrive[driveIndex][1] = *foundLocation;
         localData->isFolderOnDrive[driveIndex][1] = true;
         (*noOfFolders)++;
     }
+    delete currentSearchDirectoryPath;
+    delete foundLocation;
 }
 void BackEndAlgorithms::UbisoftStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::string* location = new std::string(*drive + "://");
+    std::string* currentSearchDirectoryPath = new std::string(*drive + "://");
+    std::string* foundLocation = new std::string("");
 
-    FindStore("Ubisoft", location);
-    if (*location != "") {
-        localData->folderLocationsOnDrive[driveIndex][2] = *location;
+    FindStore("Ubisoft", currentSearchDirectoryPath, foundLocation);
+    if (*foundLocation != "") {
+        localData->folderLocationsOnDrive[driveIndex][2] = *foundLocation;
         localData->isFolderOnDrive[driveIndex][2] = true;
         (*noOfFolders)++;
     }
-    if (std::filesystem::exists(*location + "\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][3] = *location + "\\Ubisoft Game Launcher";
+    if (std::filesystem::exists(*foundLocation + "\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe")) {
+        localData->storeLocationsOnDrive[driveIndex][3] = *foundLocation + "\\Ubisoft Game Launcher";
         localData->isStoreOnDrive[driveIndex][2] = true;
         (*noOfStores)++;
     }
-    delete location;
+    delete currentSearchDirectoryPath;
+    delete foundLocation;
 }
 void BackEndAlgorithms::EpicStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::string* location = new std::string(*drive + "://");
-
-    FindStore("Epic Games", location);
-    if (*location != "") {
-        localData->folderLocationsOnDrive[driveIndex][3] = *location;
+    std::string* currentSearchDirectoryPath = new std::string(*drive + "://");
+    std::string* foundLocation = new std::string("");
+    
+    if (!FindStore("Epic Games", currentSearchDirectoryPath, foundLocation))
+    {
+        FindStore("Epic", currentSearchDirectoryPath, foundLocation);
+    }
+    if (*foundLocation != "") {
+        localData->folderLocationsOnDrive[driveIndex][3] = *foundLocation;
         localData->isFolderOnDrive[driveIndex][3] = true;
         (*noOfFolders)++;
     }
-    if (std::filesystem::exists(*location + "\\Launcher\\Engine\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][3] = *location + "\\Launcher\\Engine\\Binaries\\Win64";
+    //if (std::filesystem::exists(*foundLocation + "\\Launcher\\Engine\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
+    if (std::filesystem::exists(*foundLocation + "\\Launcher\\Portal\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
+        localData->storeLocationsOnDrive[driveIndex][3] = *foundLocation + "\\Launcher\\Engine\\Binaries\\Win64";
         localData->isStoreOnDrive[driveIndex][3] = true;
         (*noOfStores)++;
     }
-    delete location;
+    delete currentSearchDirectoryPath;
+    delete foundLocation;
 }
 
 //TODO
