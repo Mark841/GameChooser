@@ -58,13 +58,16 @@ private:
 
 	void FindStoresOnAllDrives();
 	void FindStoresOnDrive(StoresFile* localData, int driveIndex);
-	bool FindStore(std::string directoryName, std::string* currentSearchDirectoryPath, std::string* foundLocationPath, bool found = false);
+	void FindStoresOnDriveOptimised(StoresFile* localData, int driveIndex);
+	bool FindStore(std::string directoryName, std::string* currentSearchDirectoryPath, std::string* foundLocationPath);
+	bool FindStoresOptimised(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
 	bool IsSubpath(const std::string path, const std::string subpath);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
+	void AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
 	void SteamStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
 	void OriginStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
 	void UbisoftStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
