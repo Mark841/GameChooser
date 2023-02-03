@@ -51,16 +51,17 @@ public:
 	}
 	StoresFile* GetLocalData() { return localFileData; }
 
+	void FindStoresOnDrive(int driveIndex);
+	void FindStoresOnAllDrives();
 	void FindStoresOnAllDrivesNoLocalData();
 
 private:
 	BackEndAlgorithms() { localFileData = new StoresFile(); }
 
-	void FindStoresOnAllDrives();
+	void InitLocalDataSizes();
+
 	void FindStoresOnDrive(StoresFile* localData, int driveIndex);
-	void FindStoresOnDriveOptimised(StoresFile* localData, int driveIndex);
-	bool FindStore(std::string directoryName, std::string* currentSearchDirectoryPath, std::string* foundLocationPath);
-	bool FindStoresOptimised(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath);
+	bool SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
@@ -68,11 +69,6 @@ private:
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
 	void AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
-	void SteamStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
-	void OriginStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
-	void UbisoftStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
-	void EpicStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
-	//void BlizzardStore(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders);
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;

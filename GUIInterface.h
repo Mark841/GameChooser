@@ -17,7 +17,7 @@ public:
 		fileHandlerAppend = static_cast<AppendToFile*>(fileHandler);
 		fileHandlerAppend->LoadDataFromFile();
 		algorithms = BackEndAlgorithms::GetInstance();
-		if (!algorithms->GetLocalData()->exists) algorithms->FindStoresOnAllDrivesNoLocalData();
+		if (!algorithms->GetLocalData()->exists) algorithms->FindStoresOnAllDrives();
 	}
 	~GUIInterface() {
 		delete fileHandler;
