@@ -8,5 +8,6 @@ public:
 	~WriteToFile();
 
 	void AddToFile(const std::string value);
+	void SaveLocalDataToFile();
 };
 

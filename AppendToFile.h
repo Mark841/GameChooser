@@ -1,7 +1,5 @@
 #pragma once
 #include "FileManager.h"
-#include "BackEndAlgorithms.h"
-#include <vector>
 
 class AppendToFile : public FileManager
 {
@@ -11,6 +9,7 @@ public:
 
 	void AddToFile(const std::string value);
 	void AddToFile(const std::string value1, const std::string value2);
+	void SaveLocalDataToFile();
 
 	void ReadFromFile();
 	void LoadDataFromFile();

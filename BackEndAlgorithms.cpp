@@ -5,6 +5,7 @@ BackEndAlgorithms* BackEndAlgorithms::GetInstance()
     if (algorithms == NULL || algorithms == nullptr)
     {
         algorithms = new BackEndAlgorithms();
+        algorithms->InitLocalDataSizes();
         return algorithms;
     }
     else
@@ -63,6 +64,103 @@ std::vector<char> BackEndAlgorithms::GetDriveNames()
 	return pcDrives;
 }
 
+std::string BackEndAlgorithms::GetDriveNamesString()
+{
+    return GetStringFromStringArray(localFileData->driveNames);
+}
+std::vector<std::string> BackEndAlgorithms::GetFolderLocationsStrings()
+{
+    return GetStringsFrom2DStringArray(localFileData->folderLocationsOnDrive);
+}
+std::vector<std::string> BackEndAlgorithms::GetStoreLocationsStrings()
+{
+    return GetStringsFrom2DStringArray(localFileData->storeLocationsOnDrive);
+}
+std::vector<std::string> BackEndAlgorithms::GetIsFolderOnDriveStrings()
+{
+    return GetStringsFrom2DBoolArray(localFileData->isFolderOnDrive);
+}
+std::vector<std::string> BackEndAlgorithms::GetIsStoreOnDriveStrings()
+{
+    return GetStringsFrom2DBoolArray(localFileData->isStoreOnDrive);
+}
+std::string BackEndAlgorithms::GetNoOfFoldersOnDriveString()
+{
+    return GetStringFromIntArray(localFileData->numberOfFoldersOnDrive);
+}
+std::string BackEndAlgorithms::GetNoOfStoresOnDriveString()
+{
+    return GetStringFromIntArray(localFileData->numberOfStoresOnDrive);
+}
+
+//TODO MakeGeneric
+std::string BackEndAlgorithms::GetStringFromIntArray(std::vector<int> intArray)
+{
+    std::string fileEntryLine = "";
+    for (unsigned i = 0; i < intArray.size(); i++)
+    {
+        fileEntryLine += std::to_string(intArray[i]);
+        if (i != intArray.size() - 1) {
+            fileEntryLine += ",";
+        }
+    }
+    return fileEntryLine;
+}
+std::string BackEndAlgorithms::GetStringFromStringArray(std::vector<std::string> stringArray)
+{
+    std::string fileEntryLine = "";
+    for (unsigned int i = 0; i < stringArray.size(); i++)
+    {
+        fileEntryLine += stringArray[i];
+        if (i != stringArray.size() - 1) {
+            fileEntryLine += ",";
+        }
+    }
+    return fileEntryLine;
+}
+std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DStringArray(std::vector<std::vector<std::string>> stringArray)
+{
+    std::vector<std::string> fileEntries;
+    std::string fileEntryLine = "";
+    for(std::vector<std::string> driveString : stringArray)
+    {
+        fileEntryLine = "";
+        for (unsigned int i = 0; i < driveString.size(); i++)
+        {
+            fileEntryLine += driveString[i];
+            if (i != driveString.size() - 1) {
+                fileEntryLine += "|";
+            }
+            if (i == driveString.size() - 1) {
+                fileEntryLine += "?";
+            }
+        }
+        fileEntries.push_back(fileEntryLine);
+    }
+    return fileEntries;
+}
+std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vector<std::vector<bool>> boolArray)
+{
+    std::vector<std::string> fileEntries;
+    std::string fileEntryLine = "";
+    for (std::vector<bool> driveString : boolArray)
+    {
+        fileEntryLine = "";
+        for (unsigned int i = 0; i < driveString.size(); i++)
+        {
+            fileEntryLine += std::to_string(driveString[i]);
+            if (i != driveString.size() - 1) {
+                fileEntryLine += "|";
+            }
+            if (i == driveString.size() - 1) {
+                fileEntryLine += "?";
+            }
+        }
+        fileEntries.push_back(fileEntryLine);
+    }
+    return fileEntries;
+}
+
 void BackEndAlgorithms::InitLocalDataSizes()
 {
     std::vector<char> drives = GetDriveNames();
@@ -87,7 +185,7 @@ void BackEndAlgorithms::InitLocalDataSizes()
     }
 }
 
-void BackEndAlgorithms::FindStoresOnDrive(int driveIndex, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::FindStoresOnDrive(int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     return FindStoresOnDrive(localFileData, driveIndex, customSteam, customOrigin, customUbisoft, customEpic);
 }
@@ -107,28 +205,12 @@ void BackEndAlgorithms::FindStoresOnAllDrives(std::vector<std::string> customSte
 {
     std::vector<char> drives = GetDriveNames();
 
-    for (int drivesIndex = 0; drivesIndex < localFileData->amountOfDrives; drivesIndex++)
+    for (int drivesIndex = 0; drivesIndex < drives.size(); drivesIndex++)
     {
         std::cout << "Scanning drive: " << drivesIndex << std::endl;
         localFileData->driveNames[drivesIndex] = drives[drivesIndex];
         FindStoresOnDrive(localFileData, drivesIndex, customSteam, customOrigin, customUbisoft, customEpic);
         std::cout << "Scanned drive: " << drivesIndex + 1 << "\n\tDrives percentage complete: " << ((drivesIndex + 1) * 100) / localFileData->amountOfDrives << std::endl;
-    }
-
-    localFileData->exists = true;
-}
-void BackEndAlgorithms::FindStoresOnAllDrivesNoLocalData(std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
-{
-    InitLocalDataSizes();
-
-    std::vector<char> drives = GetDriveNames();
-
-    for (int drivesIndex = 0; drivesIndex < localFileData->amountOfDrives; drivesIndex++)
-    {
-        std::cout << "Scanning drive: " << drivesIndex << std::endl;
-        localFileData->driveNames[drivesIndex] = drives[drivesIndex];
-        FindStoresOnDrive(localFileData, drivesIndex, customSteam, customOrigin, customUbisoft, customEpic);
-        std::cout << "Scanned drive: " << drivesIndex + 1 << "\n\Drives percentage complete: " << ((drivesIndex + 1) * 100) / localFileData->amountOfDrives << std::endl;
     }
 
     localFileData->exists = true;
@@ -271,7 +353,7 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     return directory.substr(index)._Equal("\\" + subdirectory);
 }
 
-void BackEndAlgorithms::AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
     std::vector<std::string> steamFolders;

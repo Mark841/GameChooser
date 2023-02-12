@@ -16,11 +16,18 @@ public:
 		fileHandler = new AppendToFile("GameStores.txt");
 		fileHandlerAppend = static_cast<AppendToFile*>(fileHandler);
 		fileHandlerAppend->LoadDataFromFile();
+
 		algorithms = BackEndAlgorithms::GetInstance();
-		if (!algorithms->GetLocalData()->exists) algorithms->FindStoresOnAllDrives();
+		if (!algorithms->GetLocalData()->exists)
+		{
+			algorithms->FindStoresOnAllDrives();
+			fileHandler->SaveLocalDataToFile();
+		}
 	}
 	~GUIInterface() {
 		delete fileHandler;
+		delete fileHandlerAppend;
+		delete fileHandlerWriter;
 		delete algorithms;
 	}
 

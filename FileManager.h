@@ -1,4 +1,5 @@
 #pragma once
+#include "BackEndAlgorithms.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,6 +13,7 @@ public:
 	FileManager(const std::string fileName, int opening_mode);
 	~FileManager();
 	virtual void AddToFile(const std::string value) = 0;
+	virtual void SaveLocalDataToFile() = 0;
 
 protected:
 	std::fstream dataFile;

@@ -48,6 +48,37 @@ void AppendToFile::AddToFile(const std::string value)
 	dataFile << value << "\n";
 }
 //TODO
+void AppendToFile::SaveLocalDataToFile()
+{
+	dataFile.clear();
+	dataFile.seekg(0, std::ios::end);
+
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	StoresFile* localFileData = algorithms->GetLocalData();
+
+	dataFile << localFileData->storeAmount << "\n";
+	dataFile << localFileData->amountOfDrives << "\n";
+	dataFile << algorithms->GetDriveNamesString() << "\n";
+
+	std::vector<std::vector<std::string>> groupLocations;
+	groupLocations.push_back(algorithms->GetFolderLocationsStrings());
+	groupLocations.push_back(algorithms->GetStoreLocationsStrings());
+	groupLocations.push_back(algorithms->GetIsFolderOnDriveStrings());
+	groupLocations.push_back(algorithms->GetIsStoreOnDriveStrings());
+	// Between each group of data eg folders and stores will be a ? and between each folder will be a | 
+	for (std::vector<std::string> locations : groupLocations)
+	{
+		for (std::string drive : locations)
+		{
+			dataFile << drive << "\n";
+		}
+	}
+	dataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
+	dataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
+	dataFile << localFileData->lastPlayed << "\n";
+	//dataFile.close();
+}
+//TODO
 void AppendToFile::AddToFile(const std::string value1, const std::string value2)
 {
 	dataFile.clear();

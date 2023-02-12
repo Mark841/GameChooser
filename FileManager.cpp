@@ -3,9 +3,9 @@
 FileManager::FileManager(const std::string fileName, int opening_mode)
 {
 	if (opening_mode == 1)
-		dataFile.open(fileName.c_str(), std::ios::out | std::ios::in | dataFile.app);
+		dataFile.open(fileName, std::ios::app);
 	else if (opening_mode == 2)
-		dataFile.open(fileName.c_str(), std::ios::out | std::ios::trunc);
+		dataFile.open(fileName, std::ios::out | std::ios::trunc);
 
 	if (dataFile.fail())
 		throw std::invalid_argument("no file exists or was able to be created" + fileName);
