@@ -5,7 +5,6 @@ BackEndAlgorithms* BackEndAlgorithms::GetInstance()
     if (algorithms == NULL || algorithms == nullptr)
     {
         algorithms = new BackEndAlgorithms();
-        algorithms->InitLocalDataSizes();
         return algorithms;
     }
     else
@@ -101,7 +100,7 @@ std::string BackEndAlgorithms::GetStringFromIntArray(std::vector<int> intArray)
     {
         fileEntryLine += std::to_string(intArray[i]);
         if (i != intArray.size() - 1) {
-            fileEntryLine += ",";
+            fileEntryLine += "|";
         }
     }
     return fileEntryLine;
@@ -113,7 +112,7 @@ std::string BackEndAlgorithms::GetStringFromStringArray(std::vector<std::string>
     {
         fileEntryLine += stringArray[i];
         if (i != stringArray.size() - 1) {
-            fileEntryLine += ",";
+            fileEntryLine += "|";
         }
     }
     return fileEntryLine;
@@ -130,9 +129,6 @@ std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DStringArray(std::vec
             fileEntryLine += driveString[i];
             if (i != driveString.size() - 1) {
                 fileEntryLine += "|";
-            }
-            if (i == driveString.size() - 1) {
-                fileEntryLine += "?";
             }
         }
         fileEntries.push_back(fileEntryLine);
@@ -151,9 +147,6 @@ std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vecto
             fileEntryLine += std::to_string(driveString[i]);
             if (i != driveString.size() - 1) {
                 fileEntryLine += "|";
-            }
-            if (i == driveString.size() - 1) {
-                fileEntryLine += "?";
             }
         }
         fileEntries.push_back(fileEntryLine);
@@ -205,7 +198,7 @@ void BackEndAlgorithms::FindStoresOnAllDrives(std::vector<std::string> customSte
 {
     std::vector<char> drives = GetDriveNames();
 
-    for (int drivesIndex = 0; drivesIndex < drives.size(); drivesIndex++)
+    for (unsigned int drivesIndex = 0; drivesIndex < drives.size(); drivesIndex++)
     {
         std::cout << "Scanning drive: " << drivesIndex << std::endl;
         localFileData->driveNames[drivesIndex] = drives[drivesIndex];

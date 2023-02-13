@@ -11,7 +11,10 @@ public:
 	void AddToFile(const std::string value1, const std::string value2);
 	void SaveLocalDataToFile();
 
-	void ReadFromFile();
 	void LoadDataFromFile();
-	std::vector<std::string> GetValues();
+
+private:
+	int ProcessFileLineInt(std::string value);
+	std::vector<std::string> ProcessFileLineStringVector(std::string value);
+	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 };

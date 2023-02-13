@@ -154,6 +154,7 @@
     <ClInclude Include="BackEndAlgorithms.h" />
     <ClInclude Include="ConsoleGUI.h" />
     <ClInclude Include="FileManager.h" />
+    <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="GUIInterface.h" />
     <ClInclude Include="WriteToFile.h" />

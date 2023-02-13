@@ -15,17 +15,23 @@ void WriteToFile::AddToFile(const std::string value)
 	dataFile << value << "\n";
 }
 
-//TODO
 void WriteToFile::SaveLocalDataToFile()
 {
+	dataFile.open(dataFileFilename, std::ios::out | std::ios::trunc);
+
+	if (!dataFile.is_open())
+	{
+		std::cout << "PLEASE CLOSE THE " << dataFileFilename << " FILE" << std::endl;
+	}
+
 	dataFile.clear();
 	dataFile.seekg(0, std::ios::end);
 
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
 	StoresFile* localFileData = algorithms->GetLocalData();
 
-	dataFile << localFileData->storeAmount << "\n";
-	dataFile << localFileData->amountOfDrives << "\n";
+	dataFile << localFileData->storeAmount << "?\n";
+	dataFile << localFileData->amountOfDrives << "?\n";
 	dataFile << algorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
@@ -43,5 +49,6 @@ void WriteToFile::SaveLocalDataToFile()
 	}
 	dataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
 	dataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
-	dataFile << localFileData->lastPlayed << "\n";
+	dataFile << localFileData->lastPlayed << "?\n";
+	dataFile.close();
 }

@@ -59,5 +59,8 @@
     <ClInclude Include="BackEndAlgorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

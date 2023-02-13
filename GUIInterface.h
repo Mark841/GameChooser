@@ -15,11 +15,13 @@ public:
 	GUIInterface() {
 		fileHandler = new AppendToFile("GameStores.txt");
 		fileHandlerAppend = static_cast<AppendToFile*>(fileHandler);
-		fileHandlerAppend->LoadDataFromFile();
+
+		//fileHandlerAppend->LoadDataFromFile();
 
 		algorithms = BackEndAlgorithms::GetInstance();
 		if (!algorithms->GetLocalData()->exists)
 		{
+			algorithms->InitLocalDataSizes();
 			algorithms->FindStoresOnAllDrives();
 			fileHandler->SaveLocalDataToFile();
 		}

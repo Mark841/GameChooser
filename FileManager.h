@@ -1,4 +1,5 @@
 #pragma once
+#include "GlobalConstants.h"
 #include "BackEndAlgorithms.h"
 #include <iostream>
 #include <fstream>
