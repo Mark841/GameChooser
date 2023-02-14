@@ -1,5 +1,6 @@
 #pragma once
 #include "FileManager.h"
+#include <sstream>
 
 class AppendToFile : public FileManager
 {
@@ -16,5 +17,6 @@ public:
 private:
 	int ProcessFileLineInt(std::string value);
 	std::vector<std::string> ProcessFileLineStringVector(std::string value);
+	std::vector<int> ProcessFileLineIntVector(std::string value);
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 };

@@ -45,9 +45,9 @@ void AppendToFile::LoadDataFromFile()
 		// Is store on drive
 		else if (i == 18 || i == 19 || i == 20 || i == 21 || i == 22) { localFileData->isStoreOnDrive.push_back(ProcessFileLineBoolVector(line)); }
 		// num of folders on drive
-		else if (i == 23) { }
+		else if (i == 23) { localFileData->numberOfFoldersOnDrive = ProcessFileLineIntVector(line); }
 		// num of stores on drive
-		else if (i == 24) { }
+		else if (i == 24) { localFileData->numberOfStoresOnDrive = ProcessFileLineIntVector(line); }
 		else if (i == 25)
 		{
 			localFileData->lastPlayed = line;
@@ -111,50 +111,57 @@ void AppendToFile::AddToFile(const std::string value1, const std::string value2)
 	dataFile << value1 << " " << value2 << "\n";
 }
 
-
 int AppendToFile::ProcessFileLineInt(std::string value)
 {
 	return stoi(value);
 }
-//TODO
+
 std::vector<std::string> AppendToFile::ProcessFileLineStringVector(std::string value)
 {
-	/* Store the original string in the array, so we can loop the rest
-	 * of the algorithm. */
-	std::vector<std::string> tokens;
-	tokens.push_back(value);
+	std::stringstream test(value);
+	std::string segment;
+	std::vector<std::string> seglist;
 
-	// Store the split index in a 'size_t' (unsigned integer) type.
-	size_t splitAt;
-	// Store the size of what we're splicing out.
-	size_t splitLen = 1;
-	// Create a string for temporarily storing the fragment we're processing.
-	std::string frag;
-	// Loop infinitely - break is internal.
-	while (true)
+	while (std::getline(test, segment, '|'))
 	{
-		/* Store the last string in the vector, which is the only logical
-		 * candidate for processing. */
-		frag = tokens.back();
-		/* The index where the split is. */
-		splitAt = frag.find('|');
-		// If we didn't find a new split point...
-		if (splitAt == std::string::npos)
-		{
-			// Break the loop and (implicitly) return.
-			break;
-		}
-		/* Put everything from the left side of the split where the string
-		 * being processed used to be. */
-		tokens.back() = frag.substr(0, splitAt);
-		/* Push everything from the right side of the split to the next empty
-		 * index in the vector. */
-		tokens.push_back(frag.substr(splitAt + splitLen, frag.size() - (splitAt + splitLen)));
+		seglist.push_back(segment);
 	}
-	return tokens;
+
+	return seglist;
 }
-//TODO
+std::vector<int> AppendToFile::ProcessFileLineIntVector(std::string value)
+{
+	std::stringstream test(value);
+	std::string segment;
+	std::vector<std::string> seglist;
+	while (std::getline(test, segment, '|'))
+	{
+		seglist.push_back(segment);
+	}
+
+	std::vector<int> returnVector;
+	for (std::string segments : seglist)
+	{
+		returnVector.push_back(std::stoi(segments.c_str()));
+	}
+
+	return returnVector;
+}
 std::vector<bool> AppendToFile::ProcessFileLineBoolVector(std::string value)
 {
-	return std::vector<bool>();
+	std::stringstream test(value);
+	std::string segment;
+	std::vector<std::string> seglist;
+	while (std::getline(test, segment, '|'))
+	{
+		seglist.push_back(segment);
+	}
+
+	std::vector<bool> returnVector;
+	for (std::string segments : seglist)
+	{
+		returnVector.push_back(std::stoi(segments.c_str()));
+	}
+
+	return returnVector;
 }
