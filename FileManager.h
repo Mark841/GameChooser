@@ -5,17 +5,25 @@
 #include <fstream>
 #include <string>
 #include <vector>
-//#include <Windows.h>
-//#include <codecvt>
+#include <sstream>
 
-class FileManager abstract
+class FileManager
 {
 public:
-	FileManager(const std::string fileName, int opening_mode);
+	FileManager(const std::string fileName);
 	~FileManager();
-	virtual void AddToFile(const std::string value) = 0;
-	virtual void SaveLocalDataToFile() = 0;
+	void SaveLocalDataToFileOverwrite();
+	void SaveLocalDataToFileAppend();
+
+	void LoadDataFromFile();
+
 
 protected:
 	std::fstream dataFile;
+
+private:
+	int ProcessFileLineInt(std::string value);
+	std::vector<std::string> ProcessFileLineStringVector(std::string value);
+	std::vector<int> ProcessFileLineIntVector(std::string value);
+	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 };
