@@ -1,6 +1,4 @@
 #include "FileManager.h"
-#include "WriteToFile.h"
-#include "AppendToFile.h"
 #include "GUI.h"
 #include "ConsoleGUI.h"
 

@@ -2,31 +2,37 @@
 
 FileManager::FileManager(const std::string filename)
 {
-	LoadDataFromFile();
+	LoadLocalDataFromFile();
+	LoadWhitelistDataFromFile();
 }
 FileManager::~FileManager()
 {
-	dataFile.close();
+	localDataFile.close();
 }
 
 void FileManager::SaveLocalDataToFileAppend()
 {
-	dataFile.open(dataFileFilename, std::ios::app);
+	localDataFile.open(LOCAL_DATA_FILE_FILENAME, std::ios::app);
 
-	if (!dataFile.is_open())
+	if (!localDataFile.is_open())
 	{
-		std::cout << "PLEASE CLOSE THE " << dataFileFilename << " FILE" << std::endl;
+		std::cout << "PLEASE CLOSE THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+	}
+	if (localDataFile.fail())
+	{
+		std::cout << "CREATING THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+		CreateLocalDataFile();
 	}
 
-	dataFile.clear();
-	dataFile.seekg(0, std::ios::end);
+	localDataFile.clear();
+	localDataFile.seekg(0, std::ios::end);
 
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
 	StoresFile* localFileData = algorithms->GetLocalData();
 
-	dataFile << localFileData->storeAmount << "\n";
-	dataFile << localFileData->amountOfDrives << "\n";
-	dataFile << algorithms->GetDriveNamesString() << "\n";
+	localDataFile << localFileData->storeAmount << "\n";
+	localDataFile << localFileData->amountOfDrives << "\n";
+	localDataFile << algorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
 	groupLocations.push_back(algorithms->GetFolderLocationsStrings());
@@ -38,32 +44,39 @@ void FileManager::SaveLocalDataToFileAppend()
 	{
 		for (std::string drive : locations)
 		{
-			dataFile << drive << "\n";
+			localDataFile << drive << "\n";
 		}
 	}
-	dataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
-	dataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
-	dataFile << localFileData->lastPlayed << "\n";
-	dataFile.close();
+	localDataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
+	localDataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
+	localDataFile << localFileData->lastPlayed << "\n";
+	localDataFile.close();
 }
+// TODO - edit
 void FileManager::SaveLocalDataToFileOverwrite()
 {
-	dataFile.open(dataFileFilename, std::ios::out | std::ios::trunc);
+	localDataFile.open(LOCAL_DATA_FILE_FILENAME, std::ios::out | std::ios::trunc);
 
-	if (!dataFile.is_open())
+	if (!localDataFile.is_open())
 	{
-		std::cout << "PLEASE CLOSE THE " << dataFileFilename << " FILE" << std::endl;
+		std::cout << "PLEASE CLOSE THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+	}
+	//TODO shouldn't be needed with a file write
+	if (localDataFile.fail())
+	{
+		std::cout << "CREATING THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+		CreateLocalDataFile();
 	}
 
-	dataFile.clear();
-	dataFile.seekg(0, std::ios::end);
+	localDataFile.clear();
+	localDataFile.seekg(0, std::ios::end);
 
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
 	StoresFile* localFileData = algorithms->GetLocalData();
 
-	dataFile << localFileData->storeAmount << "?\n";
-	dataFile << localFileData->amountOfDrives << "?\n";
-	dataFile << algorithms->GetDriveNamesString() << "\n";
+	localDataFile << localFileData->storeAmount << "?\n";
+	localDataFile << localFileData->amountOfDrives << "?\n";
+	localDataFile << algorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
 	groupLocations.push_back(algorithms->GetFolderLocationsStrings());
@@ -75,37 +88,40 @@ void FileManager::SaveLocalDataToFileOverwrite()
 	{
 		for (std::string drive : locations)
 		{
-			dataFile << drive << "\n";
+			localDataFile << drive << "\n";
 		}
 	}
-	dataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
-	dataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
-	dataFile << localFileData->lastPlayed << "?\n";
-	dataFile.close();
+	localDataFile << algorithms->GetNoOfFoldersOnDriveString() << "\n";
+	localDataFile << algorithms->GetNoOfStoresOnDriveString() << "\n";
+	localDataFile << localFileData->lastPlayed << "?\n";
+	localDataFile.close();
 }
 
-//TODO - Clauses for if file is empty then fill it
-void FileManager::LoadDataFromFile()
+//TODO - Clauses for if file is empty then fill it - Why am i not using localDataFile here and instead creating a new file, keep one and get rid of the other
+void FileManager::LoadLocalDataFromFile()
 {
-	std::ifstream file(dataFileFilename);
+	std::ifstream file(LOCAL_DATA_FILE_FILENAME);
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
 	StoresFile* localFileData = algorithms->GetLocalData();
 
-	file.open(dataFileFilename, std::ios::out | std::ios::in);
+	file.open(LOCAL_DATA_FILE_FILENAME, std::ios::out | std::ios::in);
 
 	if (!file.is_open())
 	{
-		std::cout << "PLEASE CLOSE THE " << dataFileFilename << " FILE" << std::endl;
+		std::cout << "PLEASE CLOSE THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+	}
+	if (file.fail())
+	{
+		std::cout << "CREATING THE " << LOCAL_DATA_FILE_FILENAME << " FILE" << std::endl;
+		CreateLocalDataFile();
 	}
 
 	file.clear();
 	file.seekg(0, std::ios::beg);
 
-	std::vector<std::string> values;
 	int i = 0;
 	for (std::string line; std::getline(file, line);)
 	{
-		values.push_back(line);
 		std::cout << line << std::endl;
 		localFileData->exists = true;
 		if (i == 0) { localFileData->storeAmount = ProcessFileLineInt(line); }
@@ -130,6 +146,34 @@ void FileManager::LoadDataFromFile()
 			localFileData->exists = true;
 		}
 		i++;
+	}
+	file.close();
+}
+void FileManager::LoadWhitelistDataFromFile()
+{
+	std::ifstream file(WHITELIST_FILE_FILENAME);
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	WhitelistFile* whitelistData = algorithms->GetWhitelistData();
+
+	file.open(WHITELIST_FILE_FILENAME, std::ios::out | std::ios::in);
+	if (!file.is_open())
+	{
+		std::cout << "PLEASE CLOSE THE " << WHITELIST_FILE_FILENAME << " FILE" << std::endl;
+	}
+	if (file.fail())
+	{
+		std::cout << "CREATING THE " << WHITELIST_FILE_FILENAME << " FILE" << std::endl;
+		CreateWhitelistFile();
+	}
+
+	file.clear();
+	file.seekg(0, std::ios::beg);
+
+	int i = 0;
+	for (std::string line; std::getline(file, line);)
+	{
+		std::cout << "Whitelist value:" << line << std::endl;
+		whitelistData->directoryNames.push_back(line);
 	}
 	file.close();
 }
@@ -186,4 +230,22 @@ std::vector<bool> FileManager::ProcessFileLineBoolVector(std::string value)
 	}
 
 	return returnVector;
+}
+
+void FileManager::CreateLocalDataFile()
+{
+	std::fstream file(WHITELIST_FILE_FILENAME);
+	file.open(WHITELIST_FILE_FILENAME, std::ios::out);
+	file.close();
+}
+void FileManager::CreateWhitelistFile()
+{
+	std::fstream file(WHITELIST_FILE_FILENAME);
+	file.open(WHITELIST_FILE_FILENAME, std::ios::out);
+	file.close();
+	PopulateWithDefaultWhitelists();
+}
+//TODO
+void FileManager::PopulateWithDefaultWhitelists()
+{
 }

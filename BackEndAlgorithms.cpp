@@ -209,9 +209,10 @@ void BackEndAlgorithms::FindStoresOnAllDrives(std::vector<std::string> customSte
     localFileData->exists = true;
 }
 
-bool BackEndAlgorithms::SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath)
+bool BackEndAlgorithms::SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, int depth)
 {
-    if (!std::filesystem::is_directory(*currentSearchDirectoryPath))
+    // If its trying to search something that isn't a directory OR if it is over the maximum directory search depth
+    if (!std::filesystem::is_directory(*currentSearchDirectoryPath) || depth > MAX_DIRECTORY_DEPTH)
     {
         return false;
     }
@@ -283,7 +284,7 @@ bool BackEndAlgorithms::SearchForStores(std::vector<std::string> steamDirectoryN
         if ((std::filesystem::status(sf).permissions() | std::filesystem::perms::others_read) == std::filesystem::status(sf).permissions())
         {
             std::string subFolder = sf.string();
-            if (SearchForStores(steamDirectoryName, originDirectoryName, ubisoftDirectoryName, epicDirectoryName, &subFolder, foundSteamLocationPath, foundOriginLocationPath, foundUbisoftLocationPath, foundEpicLocationPath))
+            if (SearchForStores(steamDirectoryName, originDirectoryName, ubisoftDirectoryName, epicDirectoryName, &subFolder, foundSteamLocationPath, foundOriginLocationPath, foundUbisoftLocationPath, foundEpicLocationPath, depth + 1))
             {
                 return true;
             }
@@ -294,34 +295,12 @@ bool BackEndAlgorithms::SearchForStores(std::vector<std::string> steamDirectoryN
 
 bool BackEndAlgorithms::IsPathWhitelisted(const std::string path)
 {
-    if (//entry.path().string() == "C://hiberfil.sys"
-        // || entry.path().string() == "C://swapfile.sys"
-        IsSubpath(path, "hiberfil")
-        || IsSubpath(path, "swapfile")
-        || IsSubpath(path, "pagefile")
-        || IsSubpath(path, "DumpStack")
-        || IsSubpath(path, "Adobe")
-        || IsSubpath(path, "Android")
-        || IsSubpath(path, "Apple")
-        || IsSubpath(path, "Audio")
-        //|| IsSubpath(path, "lang")
-        //|| IsSubpath(path, "Languages")
-        || IsSubpath(path, "MinGW")
-        || IsSubpath(path, "Microsoft")
-        || IsSubpath(path, "Music")
-        || IsSubpath(path, "Phone")
-        || IsSubpath(path, "Photos")
-        || IsSubpath(path, "ProgramData")
-        || IsSubpath(path, "RivaTuner")
-        || IsSubpath(path, "steamapps")
-        || IsSubpath(path, "temp")
-        || IsSubpath(path, "Users")
-        || IsSubpath(path, "Videos")
-        || IsSubpath(path, "Windows")
-        || IsSubpath(path, "WinREAgent")
-        || IsSubpath(path, "$Recycle.Bin"))
+    for (std::string whitelist : whitelistsData->directoryNames)
     {
-        return true;
+        if (IsSubpath(path, whitelist))
+        {
+            return true;
+        }
     }
     return false;
 }

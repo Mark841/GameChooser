@@ -141,23 +141,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AppendToFile.cpp" />
     <ClCompile Include="BackEndAlgorithms.cpp" />
     <ClCompile Include="ConsoleGUI.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameChooser.cpp" />
     <ClCompile Include="GUI.cpp" />
-    <ClCompile Include="WriteToFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppendToFile.h" />
     <ClInclude Include="BackEndAlgorithms.h" />
     <ClInclude Include="ConsoleGUI.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="GUIInterface.h" />
-    <ClInclude Include="WriteToFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

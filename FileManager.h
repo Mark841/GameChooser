@@ -15,15 +15,21 @@ public:
 	void SaveLocalDataToFileOverwrite();
 	void SaveLocalDataToFileAppend();
 
-	void LoadDataFromFile();
+	void LoadLocalDataFromFile();
+	void LoadWhitelistDataFromFile();
 
 
 protected:
-	std::fstream dataFile;
+	std::fstream localDataFile;
+	std::fstream whitelistFile;
 
 private:
 	int ProcessFileLineInt(std::string value);
 	std::vector<std::string> ProcessFileLineStringVector(std::string value);
 	std::vector<int> ProcessFileLineIntVector(std::string value);
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
+
+	void CreateLocalDataFile();
+	void CreateWhitelistFile();
+	void PopulateWithDefaultWhitelists();
 };
