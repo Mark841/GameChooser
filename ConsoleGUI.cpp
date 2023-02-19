@@ -116,8 +116,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		manager->GetAlgorithmsHandler()->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
-		manager->GetFileManagerHandler()->WriteLocalDataToFileOverwrite();
+		manager->->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
 		break;
 	}
 	case 2:
@@ -129,8 +128,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		manager->GetAlgorithmsHandler()->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
-		manager->GetFileManagerHandler()->WriteLocalDataToFileOverwrite();
+		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
 		break;
 	}
 	case 3:
