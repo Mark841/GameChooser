@@ -14,4 +14,6 @@ public:
 	int DisplayAllGames();
 	int DisplayStores();
 	int DisplayStoresWithSearch();
+
+	std::vector<std::string> GetCustomDirectoryNames(std::string platformName);
 };

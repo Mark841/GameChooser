@@ -13,8 +13,7 @@ BackEndAlgorithms* BackEndAlgorithms::GetInstance()
     }
 }
 
-//TODO
-void BackEndAlgorithms::ScanDrive(char driveName, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::ScanDrive(char driveName, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     StoresFile* localData = GetLocalData();
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
@@ -27,18 +26,13 @@ void BackEndAlgorithms::ScanDrive(char driveName, std::vector<std::string> custo
         }
         drivesIndex++;
     }
-    // Save Data to local storage struct here
-
-    // Save to file elsewhere
-
 }
-
-void BackEndAlgorithms::ScanAllDrives(std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::ScanAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
     for (char drive : allDrives)
     {
-        ScanDrive(drive);
+        ScanDrive(drive, customSteam, customOrigin, customUbisoft, customEpic);
     }
 }
 
@@ -178,11 +172,11 @@ void BackEndAlgorithms::InitLocalDataSizes()
     }
 }
 
-void BackEndAlgorithms::FindStoresOnDrive(int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+void BackEndAlgorithms::FindStoresOnDrive(const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     return FindStoresOnDrive(localFileData, driveIndex, customSteam, customOrigin, customUbisoft, customEpic);
 }
-void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, int driveIndex, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     int* noOfStores = new int;
     *noOfStores = 0;
@@ -194,7 +188,7 @@ void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, int driveIndex,
     localData->numberOfStoresOnDrive[driveIndex] = *noOfStores;
     localData->numberOfFoldersOnDrive[driveIndex] = *noOfFolders;
 }
-void BackEndAlgorithms::FindStoresOnAllDrives(std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic)
+void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::vector<char> drives = GetDriveNames();
 
@@ -325,7 +319,7 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     return directory.substr(index)._Equal("\\" + subdirectory);
 }
 
-void BackEndAlgorithms::AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
     std::vector<std::string> steamFolders;

@@ -1,24 +1,14 @@
 #pragma once
-#include "BackEndAlgorithms.h"
-#include "FileManager.h"
+#include "BackEndManager.h"
 
 class GUIInterface abstract
 {
 public:
 	GUIInterface() {
-		fileHandler = new FileManager("GameStores.txt");
-		algorithms = BackEndAlgorithms::GetInstance();
-
-		if (!algorithms->GetLocalData()->exists)
-		{
-			algorithms->InitLocalDataSizes();
-			algorithms->FindStoresOnAllDrives();
-			fileHandler->WriteLocalDataToFileOverwrite();
-		}
+		manager = new BackEndManager();
 	}
 	~GUIInterface() {
-		delete fileHandler;
-		delete algorithms;
+		delete manager;
 	}
 
 	virtual void DisplayMainMenu() = 0;
@@ -29,6 +19,5 @@ public:
 	virtual int DisplayStoresWithSearch() = 0;
 
 protected:
-	FileManager* fileHandler = nullptr;
-	BackEndAlgorithms* algorithms = nullptr;
+	BackEndManager* manager;
 };

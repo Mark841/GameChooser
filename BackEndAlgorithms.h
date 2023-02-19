@@ -35,8 +35,8 @@ public:
 
 	void InitLocalDataSizes();
 
-	void ScanDrive(char driveName, std::vector<std::string> customSteam = {}, std::vector<std::string> customOrigin = {}, std::vector<std::string> customUbisoft = {}, std::vector<std::string> customEpic = {});
-	void ScanAllDrives(std::vector<std::string> customSteam = {}, std::vector<std::string> customOrigin = {}, std::vector<std::string> customUbisoft = {}, std::vector<std::string> customEpic = {});
+	void ScanDrive(const char driveName, const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
+	void ScanAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 	std::vector<char> GetDriveNames();
 
 	std::string GetDriveNamesString();
@@ -71,8 +71,8 @@ public:
 	StoresFile* GetLocalData() { return localFileData; }
 	WhitelistFile* GetWhitelistData() { return whitelistsData; }
 
-	void FindStoresOnDrive(int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
-	void FindStoresOnAllDrives(std::vector<std::string> customSteam = {}, std::vector<std::string> customOrigin = {}, std::vector<std::string> customUbisoft = {}, std::vector<std::string> customEpic = {});
+	void FindStoresOnDrive(const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
+	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 private:
 	BackEndAlgorithms() { 
@@ -80,7 +80,7 @@ private:
 		whitelistsData = new WhitelistFile(); 
 	}
 
-	void FindStoresOnDrive(StoresFile* localData, int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
+	void FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 	bool SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, int depth = 0);
 
 	bool IsPathWhitelisted(const std::string path);
@@ -88,7 +88,7 @@ private:
 	bool IsSubpath(const std::string path, const std::string subpath);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
-	void AllStores(StoresFile* localData, int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
+	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;

@@ -96,7 +96,7 @@ int ConsoleGUI::DisplayScanByDrive()
 	{
 		std::cout << "Scan system for stores (by drive or all drives) has been selected" << std::endl;
 		std::cout << "Please enter a drive to scan, your current drives are: " << std::endl;
-		std::vector<char> allDrives = algorithms->GetDriveNames();
+		std::vector<char> allDrives = manager->GetAlgorithmsHandler()->GetDriveNames();
 		for (char drive : allDrives)
 		{
 			std::cout << (char) drive << ", ";
@@ -111,101 +111,26 @@ int ConsoleGUI::DisplayScanByDrive()
 			std::cin >> driveName;
 		}
 
-		std::vector<std::string> customSteam;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your STEAM games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customSteamDirectory = "null";
-		while (customSteamDirectory != "")
-		{
-			std::cout << "\tCUSTOM STEAM DIRECTORY NAME: ";
-			std::cin >> customSteamDirectory;
-			customSteam.push_back(customSteamDirectory);
-			std::cout << std::endl;
-		}
+		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
+		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		std::vector<std::string> customOrigin;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your ORIGIN games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customOriginDirectory = "null";
-		while (customOriginDirectory != "")
-		{
-			std::cout << "\tCUSTOM ORIGIN DIRECTORY NAME: ";
-			std::cin >> customOriginDirectory;
-			customOrigin.push_back(customOriginDirectory);
-			std::cout << std::endl;
-		}
-
-		std::vector<std::string> customUbisoft;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your UBISOFT games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customUbisoftDirectory = "null";
-		while (customUbisoftDirectory != "")
-		{
-			std::cout << "\tCUSTOM UBISOFT DIRECTORY NAME: ";
-			std::cin >> customUbisoftDirectory;
-			customUbisoft.push_back(customUbisoftDirectory);
-			std::cout << std::endl;
-		}
-
-		std::vector<std::string> customEpic;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your EPIC games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customEpicDirectory = "null";
-		while (customEpicDirectory != "")
-		{
-			std::cout << "\tCUSTOM EPIC DIRECTORY NAME: ";
-			std::cin >> customEpicDirectory;
-			customEpic.push_back(customEpicDirectory);
-			std::cout << std::endl;
-		}
-
-		algorithms->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
+		manager->GetAlgorithmsHandler()->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
+		manager->GetFileManagerHandler()->WriteLocalDataToFileOverwrite();
 		break;
 	}
 	case 2:
 	{
 		std::cout << "Specify store or game folder locations has been selected" << std::endl;
-		std::vector<std::string> customSteam;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your STEAM games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customSteamDirectory = "null";
-		while (customSteamDirectory != "")
-		{
-			std::cout << "\tCUSTOM STEAM DIRECTORY NAME: ";
-			std::cin >> customSteamDirectory;
-			customSteam.push_back(customSteamDirectory);
-			std::cout << std::endl;
-		}
 
-		std::vector<std::string> customOrigin;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your ORIGIN games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customOriginDirectory = "null";
-		while (customOriginDirectory != "")
-		{
-			std::cout << "\tCUSTOM ORIGIN DIRECTORY NAME: ";
-			std::cin >> customOriginDirectory;
-			customOrigin.push_back(customOriginDirectory);
-			std::cout << std::endl;
-		}
+		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
+		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		std::vector<std::string> customUbisoft;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your UBISOFT games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customUbisoftDirectory = "null";
-		while (customUbisoftDirectory != "")
-		{
-			std::cout << "\tCUSTOM UBISOFT DIRECTORY NAME: ";
-			std::cin >> customUbisoftDirectory;
-			customUbisoft.push_back(customUbisoftDirectory);
-			std::cout << std::endl;
-		}
-
-		std::vector<std::string> customEpic;
-		std::cout << "If you have any CUSTOM DIRECTORY names for your EPIC games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
-		std::string customEpicDirectory = "null";
-		while (customEpicDirectory != "")
-		{
-			std::cout << "\tCUSTOM EPIC DIRECTORY NAME: ";
-			std::cin >> customEpicDirectory;
-			customEpic.push_back(customEpicDirectory);
-			std::cout << std::endl;
-		}
-
-		algorithms->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+		manager->GetAlgorithmsHandler()->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+		manager->GetFileManagerHandler()->WriteLocalDataToFileOverwrite();
 		break;
 	}
 	case 3:
@@ -355,4 +280,19 @@ int ConsoleGUI::DisplayStoresWithSearch()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+}
+
+std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platformName)
+{
+	std::vector<std::string> custom;
+	std::cout << "If you have any CUSTOM DIRECTORY names for your " << platformName << " games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
+	std::string customDirectory = "null";
+	while (customDirectory != "")
+	{
+		std::cout << "\tCUSTOM " << platformName << " DIRECTORY NAME: ";
+		std::cin >> customDirectory;
+		custom.push_back(customDirectory);
+		std::cout << std::endl;
+	}
+	return custom;
 }
