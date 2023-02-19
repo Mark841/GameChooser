@@ -24,7 +24,7 @@ struct StoresFile
 };
 struct WhitelistFile
 {
-	std::vector<std::string> directoryNames;
+	std::vector<std::string> directoryNames = {};
 };
 
 class BackEndAlgorithms
@@ -75,7 +75,10 @@ public:
 	void FindStoresOnAllDrives(std::vector<std::string> customSteam = {}, std::vector<std::string> customOrigin = {}, std::vector<std::string> customUbisoft = {}, std::vector<std::string> customEpic = {});
 
 private:
-	BackEndAlgorithms() { localFileData = new StoresFile(); }
+	BackEndAlgorithms() { 
+		localFileData = new StoresFile(); 
+		whitelistsData = new WhitelistFile(); 
+	}
 
 	void FindStoresOnDrive(StoresFile* localData, int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 	bool SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, int depth = 0);

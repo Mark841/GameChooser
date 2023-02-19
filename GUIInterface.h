@@ -13,7 +13,7 @@ public:
 		{
 			algorithms->InitLocalDataSizes();
 			algorithms->FindStoresOnAllDrives();
-			fileHandler->SaveLocalDataToFileOverwrite();
+			fileHandler->WriteLocalDataToFileOverwrite();
 		}
 	}
 	~GUIInterface() {

@@ -12,16 +12,12 @@ class FileManager
 public:
 	FileManager(const std::string fileName);
 	~FileManager();
-	void SaveLocalDataToFileOverwrite();
-	void SaveLocalDataToFileAppend();
+	void WriteLocalDataToFileOverwrite();
+	void WriteLocalDataToFileAppend();
+	void WriteWhitelistsToFileAppend(std::vector<std::string> whitelists);
 
-	void LoadLocalDataFromFile();
-	void LoadWhitelistDataFromFile();
-
-
-protected:
-	std::fstream localDataFile;
-	std::fstream whitelistFile;
+	void ReadLocalDataFromFile();
+	void ReadWhitelistDataFromFile();
 
 private:
 	int ProcessFileLineInt(std::string value);
@@ -29,7 +25,5 @@ private:
 	std::vector<int> ProcessFileLineIntVector(std::string value);
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 
-	void CreateLocalDataFile();
-	void CreateWhitelistFile();
-	void PopulateWithDefaultWhitelists();
+	void WriteDefaultWhitelistsToFile(std::fstream* file);
 };

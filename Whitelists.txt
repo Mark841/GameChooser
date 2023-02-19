@@ -2,9 +2,6 @@ hiberfil
 swapfile
 pagefile
 DumpStack
-Adobe
-Android
-Apple
 Audio
 lang
 Languages
@@ -15,7 +12,6 @@ Phone
 Photos
 ProgramData
 RivaTuner
-steamapps
 temp
 Users
 Videos
