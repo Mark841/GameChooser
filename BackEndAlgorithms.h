@@ -37,8 +37,9 @@ public:
 
 	void ScanDrive(const char driveName, const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 	void ScanAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
-	std::vector<char> GetDriveNames();
 
+	std::vector<char> GetDriveNames();
+	std::vector<std::string> GetStoreNames();
 	std::string GetDriveNamesString();
 	std::vector<std::string> GetFolderLocationsStrings();
 	std::vector<std::string> GetStoreLocationsStrings();
@@ -47,10 +48,9 @@ public:
 	std::string GetNoOfFoldersOnDriveString();
 	std::string GetNoOfStoresOnDriveString();
 
-	std::string GetStringFromIntArray(const std::vector<int> intArray);
-	std::string GetStringFromStringArray(const std::vector<std::string> stringArray);
-	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
-	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
+	std::vector<std::string> GetGamesAlphabetically(bool descending);
+	std::vector<std::vector<std::string>> GetGamesByDrive();
+	std::vector<std::vector<std::string>> GetGamesByStore();
 
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
@@ -87,6 +87,11 @@ private:
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
 	bool IsSubpath(const std::string path, const std::string subpath);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
+
+	std::string GetStringFromIntArray(const std::vector<int> intArray);
+	std::string GetStringFromStringArray(const std::vector<std::string> stringArray);
+	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
+	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 

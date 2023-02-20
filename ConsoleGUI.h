@@ -15,5 +15,7 @@ public:
 	int DisplayStores();
 	int DisplayStoresWithSearch();
 
+private:
 	std::vector<std::string> GetCustomDirectoryNames(std::string platformName);
+	bool GetYesOrNoFromUser(std::string aboutValue);
 };

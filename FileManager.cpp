@@ -127,7 +127,7 @@ void FileManager::ReadLocalDataFromFile()
 	int i = 0;
 	for (std::string line; std::getline(file, line);)
 	{
-		std::cout << "LocalData value:\t" << line << std::endl; //REMOVE
+		//std::cout << "LocalData value:\t" << line << std::endl; //REMOVE
 		localFileData->exists = true;
 		if (i == 0) { localFileData->storeAmount = ProcessFileLineInt(line); }
 		else if (i == 1) { localFileData->amountOfDrives = ProcessFileLineInt(line); }
@@ -185,7 +185,7 @@ void FileManager::ReadWhitelistDataFromFile()
 	file.seekg(0, std::ios::beg);
 	for (std::string line; std::getline(file, line);)
 	{
-		std::cout << "Whitelist value:\t" << line << std::endl; //REMOVE
+		//std::cout << "Whitelist value:\t" << line << std::endl; //REMOVE
 		whitelistData->directoryNames.push_back(line);
 	}
 	file.close();

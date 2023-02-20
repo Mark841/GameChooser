@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackEndAlgorithms.h" />
+    <ClInclude Include="BackEndManager.h" />
     <ClInclude Include="ConsoleGUI.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GlobalConstants.h" />

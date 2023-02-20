@@ -1,11 +1,9 @@
 #include "ConsoleGUI.h"
 
-//TODO
 ConsoleGUI::ConsoleGUI()
 {
 	DisplayMainMenu();
 }
-//TODO
 ConsoleGUI::~ConsoleGUI()
 {
 }
@@ -64,7 +62,6 @@ void ConsoleGUI::DisplayMainMenu()
 		}
 	}
 }
-
 int ConsoleGUI::DisplayScanByDrive()
 {
 	int userInput;
@@ -76,14 +73,6 @@ int ConsoleGUI::DisplayScanByDrive()
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Please enter a numbered option: ";
 	std::cin >> userInput;
-
-	// -------------------------------------------------------------------------------
-	//TODO
-	/*
-	* Ask the user what the folders/directory names are for where their games/stores are stored for each store/platform
-	   eg. SteamLibrary, SteamGames, Steam, or so on
-	*/
-	// -------------------------------------------------------------------------------
 
 	while (userInput < 0 || userInput > 3)
 	{
@@ -116,7 +105,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		manager->->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
+		manager->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
 		break;
 	}
 	case 2:
@@ -140,7 +129,7 @@ int ConsoleGUI::DisplayScanByDrive()
 	}
 }
 
-//TODO
+//TODO - Specify store or game folder locations page has been selected
 int ConsoleGUI::DisplayFolderIdentifier()
 {
 	int userInput;
@@ -175,20 +164,21 @@ int ConsoleGUI::DisplayFolderIdentifier()
 	}
 }
 
-//TODO
+//TODO - View all games on system
 int ConsoleGUI::DisplayAllGames()
 {
 	int userInput;
-	std::cout << "\n\nHello and welcome to the PC Game Store combiners TODO, please select an option from below" << std::endl;
-	std::cout << "1 - TODO" << std::endl;
-	std::cout << "2 - TODO" << std::endl;
-	std::cout << "3 - Return to Main Menu" << std::endl;
+	std::cout << "\n\nHello and welcome to the PC Game Store combiners game displayer, please select an option from below" << std::endl;
+	std::cout << "1 - View games alphabetically" << std::endl;
+	std::cout << "2 - View games by drive" << std::endl;
+	std::cout << "3 - View games by store" << std::endl;
+	std::cout << "4 - Return to Main Menu" << std::endl;
 	std::cout << "0 - EXIT" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Please enter a numbered option: ";
 	std::cin >> userInput;
 
-	while (userInput < 0 || userInput > 3)
+	while (userInput < 0 || userInput > 4)
 	{
 		std::cout << "Please enter a valid option: ";
 		std::cin >> userInput;
@@ -196,12 +186,51 @@ int ConsoleGUI::DisplayAllGames()
 	switch (userInput)
 	{
 	case 1:
-		std::cout << "TODO has been selected" << std::endl;
+	{
+		std::cout << "View games alphabetically has been selected" << std::endl;
+		bool orderByDescending = GetYesOrNoFromUser("order the games in DESCENDING ALPHABETICAL ORDER");
+		std::vector<std::string> gamesByAlphabet = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(orderByDescending);
+		for (std::string game : gamesByAlphabet)
+		{
+			std::cout << game << std::endl;
+		}
 		break;
+	}
 	case 2:
-		std::cout << "TODO has been selected" << std::endl;
+	{
+		std::cout << "View games by drive has been selected" << std::endl;
+		std::vector<std::vector<std::string>> gamesByDrive = manager->GetAlgorithmsHandler()->GetGamesByDrive();
+		std::vector<char> driveNames = manager->GetAlgorithmsHandler()->GetDriveNames();
+		int index = 0;
+		for (std::vector<std::string> drive : gamesByDrive)
+		{
+			std::cout << "Games on drive " << driveNames[index] << ":" << std::endl;
+			for (std::string game : drive)
+			{
+				std::cout << "\t" << game << std::endl;
+			}
+			index++;
+		}
 		break;
+	}
 	case 3:
+	{
+		std::cout << "View games by store has been selected" << std::endl;
+		std::vector<std::vector<std::string>> gamesByStore = manager->GetAlgorithmsHandler()->GetGamesByStore();
+		std::vector<std::string> storeNames = manager->GetAlgorithmsHandler()->GetStoreNames();
+		int index = 0;
+		for (std::vector<std::string> drive : gamesByStore)
+		{
+			std::cout << "Games on store " << storeNames[index] << ":" << std::endl;
+			for (std::string game : drive)
+			{
+				std::cout << "\t" << game << std::endl;
+			}
+			index++;
+		}
+		break;
+	}
+	case 4:
 		std::cout << "Returning to Main Menu" << std::endl;
 		break;
 	default:
@@ -210,7 +239,7 @@ int ConsoleGUI::DisplayAllGames()
 	}
 }
 
-//TODO
+//TODO - Open stores
 int ConsoleGUI::DisplayStores()
 {
 	int userInput;
@@ -245,7 +274,7 @@ int ConsoleGUI::DisplayStores()
 	}
 }
 
-//TODO
+//TODO - Search for game on stores
 int ConsoleGUI::DisplayStoresWithSearch()
 {
 	int userInput;
@@ -280,6 +309,8 @@ int ConsoleGUI::DisplayStoresWithSearch()
 	}
 }
 
+// --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
+
 std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platformName)
 {
 	std::vector<std::string> custom;
@@ -293,4 +324,18 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platfor
 		std::cout << std::endl;
 	}
 	return custom;
+}
+bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
+{
+	std::string answer;
+	std::cout << "Would you like to " << aboutValue << ", if you would please type 'y' or 'yes' and then press ENTER: " << std::endl;
+	std::cin >> answer;
+	if (answer == "y" || answer == "yes")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
