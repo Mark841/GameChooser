@@ -39,7 +39,6 @@ public:
 	void ScanAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 	std::vector<char> GetDriveNames();
-	std::vector<std::string> GetStoreNames();
 	std::string GetDriveNamesString();
 	std::vector<std::string> GetFolderLocationsStrings();
 	std::vector<std::string> GetStoreLocationsStrings();
@@ -71,7 +70,6 @@ public:
 	StoresFile* GetLocalData() { return localFileData; }
 	WhitelistFile* GetWhitelistData() { return whitelistsData; }
 
-	void FindStoresOnDrive(const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 private:
@@ -81,11 +79,13 @@ private:
 	}
 
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
-	bool SearchForStores(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, int depth = 0);
+	bool SearchForStoresAndFolders(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
+		int depth = 0, bool foundSteam = false, bool foundOrigin = false, bool foundUbisoft = false, bool foundEpic = false);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
 	bool IsSubpath(const std::string path, const std::string subpath);
+	bool IsSubpathOfAlternateStore(const std::string path, const std::string currentStoreName);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
 	std::string GetStringFromIntArray(const std::vector<int> intArray);

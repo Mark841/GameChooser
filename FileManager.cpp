@@ -49,8 +49,8 @@ void FileManager::WriteLocalDataToFileAppend()
 }
 void FileManager::WriteLocalDataToFileOverwrite()
 {
-	std::fstream file(LOCAL_DATA_FILE_FILENAME);
-	file.open(LOCAL_DATA_FILE_FILENAME, std::ios::out | std::ios::trunc);
+	std::ofstream file(LOCAL_DATA_FILE_FILENAME);
+	file.open(LOCAL_DATA_FILE_FILENAME, std::ios::out);
 
 	if (!file.is_open())
 	{
@@ -58,13 +58,12 @@ void FileManager::WriteLocalDataToFileOverwrite()
 	}
 
 	file.clear();
-	file.seekg(0, std::ios::end);
 
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
 	StoresFile* localFileData = algorithms->GetLocalData();
 
-	file << localFileData->storeAmount << "?\n";
-	file << localFileData->amountOfDrives << "?\n";
+	file << localFileData->storeAmount << "\n";
+	file << localFileData->amountOfDrives << "\n";
 	file << algorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
@@ -82,9 +81,10 @@ void FileManager::WriteLocalDataToFileOverwrite()
 	}
 	file << algorithms->GetNoOfFoldersOnDriveString() << "\n";
 	file << algorithms->GetNoOfStoresOnDriveString() << "\n";
-	file << localFileData->lastPlayed << "?\n";
+	file << localFileData->lastPlayed << "\n";
 	file.close();
 }
+
 //TODO
 void FileManager::WriteWhitelistsToFileAppend(std::vector<std::string> whitelists)
 {

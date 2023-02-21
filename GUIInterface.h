@@ -1,4 +1,5 @@
 #pragma once
+#include "GlobalConstants.h"
 #include "BackEndManager.h"
 
 class GUIInterface abstract
@@ -10,6 +11,8 @@ public:
 	~GUIInterface() {
 		delete manager;
 	}
+
+	virtual void NewStoresInstalledSinceLastRun() = 0;
 
 	virtual void DisplayMainMenu() = 0;
 	virtual int DisplayScanByDrive() = 0;

@@ -7,6 +7,8 @@ public:
 	GUI();
 	~GUI();
 
+	void NewStoresInstalledSinceLastRun();
+
 	void DisplayMainMenu();
 	int DisplayScanByDrive();
 	int DisplayFolderIdentifier();

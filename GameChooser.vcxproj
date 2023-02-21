@@ -146,6 +146,7 @@
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameChooser.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="GUIInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackEndAlgorithms.h" />

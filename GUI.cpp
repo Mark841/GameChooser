@@ -11,6 +11,12 @@ GUI::~GUI()
 }
 
 //TODO
+void GUI::NewStoresInstalledSinceLastRun()
+{
+
+}
+
+//TODO
 void GUI::DisplayMainMenu()
 {
 

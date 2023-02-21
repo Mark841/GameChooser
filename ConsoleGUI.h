@@ -7,6 +7,8 @@ class ConsoleGUI : GUIInterface
 public:
 	ConsoleGUI();
 	~ConsoleGUI();
+	
+	void NewStoresInstalledSinceLastRun();
 
 	void DisplayMainMenu();
 	int DisplayScanByDrive();

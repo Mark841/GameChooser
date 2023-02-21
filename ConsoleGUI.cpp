@@ -8,8 +8,28 @@ ConsoleGUI::~ConsoleGUI()
 {
 }
 
+void ConsoleGUI::NewStoresInstalledSinceLastRun()
+{
+	std::cout << "Hello and welcome to the PC Game Store combiner" << std::endl;
+	std::cout << "Have new stores or drives been installed since last run of this application?" << std::endl;
+	std::cout << "Or have new folders been made for where games are stored on existing drives?" << std::endl;
+	std::cout << "\nIf any of these are true please enter 'y' or 'yes'" << std::endl;
+	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
+	if (GetYesOrNoFromUser("SCAN YOUR MACHINE for STORES and GAME FOLDERS again"))
+	{
+		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
+		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
+
+		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+	}
+}
+
 void ConsoleGUI::DisplayMainMenu()
 {
+	NewStoresInstalledSinceLastRun();
+
 	int userInput = 0;
 	while (userInput != -1)
 	{
@@ -217,7 +237,7 @@ int ConsoleGUI::DisplayAllGames()
 	{
 		std::cout << "View games by store has been selected" << std::endl;
 		std::vector<std::vector<std::string>> gamesByStore = manager->GetAlgorithmsHandler()->GetGamesByStore();
-		std::vector<std::string> storeNames = manager->GetAlgorithmsHandler()->GetStoreNames();
+		std::vector<std::string> storeNames = STORE_NAMES;
 		int index = 0;
 		for (std::vector<std::string> drive : gamesByStore)
 		{
@@ -314,15 +334,20 @@ int ConsoleGUI::DisplayStoresWithSearch()
 std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platformName)
 {
 	std::vector<std::string> custom;
-	std::cout << "If you have any CUSTOM DIRECTORY names for your " << platformName << " games library, please enter each name and then press ENTER, if you have no custom directory names please just press ENTER: " << std::endl;
+	std::cout << "If you have any CUSTOM DIRECTORY names for your " << platformName << " games library, please enter each name and then press ENTER, if you have no custom directory names please type 'n' or 'no' and press ENTER: " << std::endl;
 	std::string customDirectory = "null";
-	while (customDirectory != "")
+	while (true)
 	{
 		std::cout << "\tCUSTOM " << platformName << " DIRECTORY NAME: ";
 		std::cin >> customDirectory;
+		if (customDirectory == "n" || customDirectory == "no")
+		{
+			break;
+		}
 		custom.push_back(customDirectory);
 		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 	return custom;
 }
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
