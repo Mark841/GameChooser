@@ -27,6 +27,7 @@ private:
 	std::vector<int> ProcessFileLineIntVector(std::string value);
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 
+	void WriteToFile(std::fstream* file, std::vector<std::string> lines);
 	std::vector<std::string> ReadLinesFromFile(std::fstream* file);
 
 	void WriteDefaultWhitelistsToFile(std::fstream* file);

@@ -39,6 +39,7 @@ void BackEndAlgorithms::InitLocalDataSizes()
     }
 }
 
+//TODO - remove all custom vectors and make the method use the customData struct
 void BackEndAlgorithms::ScanDrive(char driveName, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     StoresFile* localData = GetLocalData();
@@ -53,6 +54,7 @@ void BackEndAlgorithms::ScanDrive(char driveName, const std::vector<std::string>
         drivesIndex++;
     }
 }
+//TODO - remove all custom vectors and make the method use the customData struct
 void BackEndAlgorithms::ScanAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
@@ -158,6 +160,7 @@ void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> cus
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
 
+    //TODO - remove all custom vectors and make the method use the customData struct
 void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     int* noOfStores = new int;
@@ -368,6 +371,7 @@ std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vecto
 }
 
 //TODO - Store custom directory names in a txt like the whitelists so can be used across several runs of program and don't have to be entered every time
+//TODO - remove all custom vectors and make the method use the customData struct
 void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);

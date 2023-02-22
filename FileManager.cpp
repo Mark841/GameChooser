@@ -101,14 +101,7 @@ void FileManager::WriteWhitelistsToFileAppend()
 		WriteDefaultWhitelistsToFile(&file);
 	}
 
-	//TODO - move to method ----------
-	file.clear();
-	file.seekg(0, std::ios::end);
-	for (std::string whitelist : whitelists)
-	{
-		file << whitelist << "\n";
-	}
-	// -----------
+	WriteToFile(&file, whitelists);
 
 	file.close();
 }
@@ -124,14 +117,8 @@ void FileManager::WriteCustomDirectoriesToFileAppend()
 	{
 		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << CUSTOM_DIRECTORY_FILE_FILENAME << " OR PLEASE CLOSE THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
 	}
-	//TODO - move to method ----------
-	file.clear();
-	file.seekg(0, std::ios::end);
-	for (std::string directory : customDirectories)
-	{
-		file << directory << "\n";
-	}
-	// -----------
+
+	WriteToFile(&file, customDirectories);
 
 	file.close();
 }
@@ -283,6 +270,16 @@ std::vector<bool> FileManager::ProcessFileLineBoolVector(std::string value)
 	}
 
 	return returnVector;
+}
+
+void FileManager::WriteToFile(std::fstream* file, std::vector<std::string> lines)
+{
+	file->clear();
+	file->seekg(0, std::ios::end);
+	for (std::string line : lines)
+	{
+		*file << line << "\n";
+	}
 }
 
 std::vector<std::string>  FileManager::ReadLinesFromFile(std::fstream* file)

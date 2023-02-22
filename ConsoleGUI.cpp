@@ -125,10 +125,6 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customSteam);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customOrigin);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customUbisoft);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customEpic);
 		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
 
 		//TODO - remove all custom vectors and make the method use the customData struct
@@ -144,10 +140,6 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customSteam);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customOrigin);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customUbisoft);
-		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customEpic);
 		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
 
 		//TODO - remove all custom vectors and make the method use the customData struct
@@ -353,22 +345,26 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platfor
 	while (true)
 	{
 		std::cout << "\tCUSTOM " << platformName << " DIRECTORY NAME: ";
-		std::cin >> customDirectory;
+		std::getline(std::cin, customDirectory);
 		if (customDirectory == "n" || customDirectory == "no")
 		{
 			break;
 		}
-		custom.push_back(customDirectory);
+		if (customDirectory != "")
+		{
+			custom.push_back(customDirectory);
+		}
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+	manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(custom);
 	return custom;
 }
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
 {
 	std::string answer;
 	std::cout << "Would you like to " << aboutValue << ", if you would please type 'y' or 'yes' and then press ENTER: " << std::endl;
-	std::cin >> answer;
+	std::getline(std::cin, answer);
 	if (answer == "y" || answer == "yes")
 	{
 		return true;
