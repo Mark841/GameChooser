@@ -22,7 +22,7 @@ struct StoresFile
 	std::vector<int> numberOfStoresOnDrive;
 	std::string lastPlayed = "null";
 };
-struct WhitelistFile
+struct DirectoryData
 {
 	std::vector<std::string> directoryNames = {};
 };
@@ -35,7 +35,9 @@ public:
 
 	void InitLocalDataSizes();
 
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void ScanDrive(const char driveName, const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void ScanAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 	std::vector<char> GetDriveNames();
@@ -67,17 +69,26 @@ public:
 		localFileData->numberOfStoresOnDrive = numberOfStoresOnDrive;
 		localFileData->lastPlayed = lastPlayed;
 	}
-	StoresFile* GetLocalData() { return localFileData; }
-	WhitelistFile* GetWhitelistData() { return whitelistsData; }
+	inline StoresFile* GetLocalData() { return localFileData; }
+	inline DirectoryData* GetWhitelistData() { return whitelistsData; }
+	inline DirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
+	inline void AddToCustomDirectoryData(std::vector<std::string> dataVector) {
+		for (std::string data : dataVector)
+		{
+			customDirectoryData->directoryNames.push_back(data);
+		}
+	}
 
 	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 private:
 	BackEndAlgorithms() { 
 		localFileData = new StoresFile(); 
-		whitelistsData = new WhitelistFile(); 
+		whitelistsData = new DirectoryData(); 
+		customDirectoryData = new DirectoryData();
 	}
 
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 	bool SearchForStoresAndFolders(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
 		int depth = 0, bool foundSteam = false, bool foundOrigin = false, bool foundUbisoft = false, bool foundEpic = false);
@@ -93,9 +104,11 @@ private:
 	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
 	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
 
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;
-	WhitelistFile* whitelistsData;
+	DirectoryData* whitelistsData;
+	DirectoryData* customDirectoryData;
 };

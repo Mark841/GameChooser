@@ -21,17 +21,19 @@ public:
 		delete algorithms;
 	}
 
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void ScanDrive(char driveName, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic) {
 		algorithms->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
 		fileHandler->WriteLocalDataToFileOverwrite();
 	}
+	//TODO - remove all custom vectors and make the method use the customData struct
 	void ScanAllDrives(std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic) {
 		algorithms->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
 		fileHandler->WriteLocalDataToFileOverwrite();
 	}
 
-	FileManager* GetFileManagerHandler() { return fileHandler; }
-	BackEndAlgorithms* GetAlgorithmsHandler() { return algorithms; }
+	inline FileManager* GetFileManagerHandler() { return fileHandler; }
+	inline BackEndAlgorithms* GetAlgorithmsHandler() { return algorithms; }
 
 protected:
 	FileManager* fileHandler = nullptr;

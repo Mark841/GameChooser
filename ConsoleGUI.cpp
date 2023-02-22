@@ -125,6 +125,13 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customSteam);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customOrigin);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customUbisoft);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customEpic);
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
+
+		//TODO - remove all custom vectors and make the method use the customData struct
 		manager->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
 		break;
 	}
@@ -137,6 +144,13 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
 		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
 
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customSteam);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customOrigin);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customUbisoft);
+		manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(customEpic);
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
+
+		//TODO - remove all custom vectors and make the method use the customData struct
 		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
 		break;
 	}

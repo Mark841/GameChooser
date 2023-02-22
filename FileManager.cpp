@@ -4,6 +4,7 @@ FileManager::FileManager(const std::string filename)
 {
 	ReadLocalDataFromFile();
 	ReadWhitelistDataFromFile();
+	ReadCustomDirectoriesDataFromFile();
 }
 FileManager::~FileManager()
 {
@@ -85,9 +86,12 @@ void FileManager::WriteLocalDataToFileOverwrite()
 	file.close();
 }
 
-//TODO
-void FileManager::WriteWhitelistsToFileAppend(std::vector<std::string> whitelists)
+//TODO - make somewhere where it calls this
+void FileManager::WriteWhitelistsToFileAppend()
 {
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	std::vector<std::string> whitelists = algorithms->GetWhitelistData()->directoryNames;
+
 	std::fstream file(WHITELIST_FILE_FILENAME);
 	file.open(WHITELIST_FILE_FILENAME, std::ios::app);
 
@@ -97,12 +101,37 @@ void FileManager::WriteWhitelistsToFileAppend(std::vector<std::string> whitelist
 		WriteDefaultWhitelistsToFile(&file);
 	}
 
+	//TODO - move to method ----------
 	file.clear();
 	file.seekg(0, std::ios::end);
 	for (std::string whitelist : whitelists)
 	{
 		file << whitelist << "\n";
 	}
+	// -----------
+
+	file.close();
+}
+void FileManager::WriteCustomDirectoriesToFileAppend()
+{
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	std::vector<std::string> customDirectories = algorithms->GetCustomDirectoryData()->directoryNames;
+
+	std::fstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
+	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::ios::app);
+
+	if (!file.is_open())
+	{
+		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << CUSTOM_DIRECTORY_FILE_FILENAME << " OR PLEASE CLOSE THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
+	}
+	//TODO - move to method ----------
+	file.clear();
+	file.seekg(0, std::ios::end);
+	for (std::string directory : customDirectories)
+	{
+		file << directory << "\n";
+	}
+	// -----------
 
 	file.close();
 }
@@ -158,7 +187,7 @@ void FileManager::ReadWhitelistDataFromFile()
 {
 	std::fstream file(WHITELIST_FILE_FILENAME);
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	WhitelistFile* whitelistData = algorithms->GetWhitelistData();
+	DirectoryData* whitelistData = algorithms->GetWhitelistData();
 
 	file.open(WHITELIST_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -181,13 +210,24 @@ void FileManager::ReadWhitelistDataFromFile()
 		WriteDefaultWhitelistsToFile(&file);
 	}
 
-	file.clear();
-	file.seekg(0, std::ios::beg);
-	for (std::string line; std::getline(file, line);)
+	whitelistData->directoryNames = ReadLinesFromFile(&file);
+
+	file.close();
+}
+void FileManager::ReadCustomDirectoriesDataFromFile()
+{
+	std::fstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	DirectoryData* customDirectoryData = algorithms->GetCustomDirectoryData();
+
+	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	if (!file.is_open())
 	{
-		//std::cout << "Whitelist value:\t" << line << std::endl; //REMOVE
-		whitelistData->directoryNames.push_back(line);
+		std::cout << "ISSUE WITH THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
 	}
+
+	customDirectoryData->directoryNames = ReadLinesFromFile(&file);
+
 	file.close();
 }
 
@@ -245,7 +285,19 @@ std::vector<bool> FileManager::ProcessFileLineBoolVector(std::string value)
 	return returnVector;
 }
 
-//TODO
+std::vector<std::string>  FileManager::ReadLinesFromFile(std::fstream* file)
+{
+	std::vector<std::string> fileLines;
+
+	file->clear();
+	file->seekg(0, std::ios::beg);
+	for (std::string line; std::getline(*file, line);)
+	{
+		fileLines.push_back(line);
+	}
+	return fileLines;
+}
+
 void FileManager::WriteDefaultWhitelistsToFile(std::fstream* file)
 {
 	file->clear();
@@ -255,9 +307,6 @@ void FileManager::WriteDefaultWhitelistsToFile(std::fstream* file)
 	*file << "swapfile" << "\n";
 	*file << "pagefile" << "\n";
 	*file << "DumpStack" << "\n";
-	//*file << "Adobe" << "\n";		
-	//*file << "Android" << "\n";		
-	//*file << "Apple" << "\n";		
 	*file << "Audio" << "\n";		
 	*file << "lang" << "\n";		
 	*file << "Languages" << "\n";		
@@ -268,7 +317,7 @@ void FileManager::WriteDefaultWhitelistsToFile(std::fstream* file)
 	*file << "Photos" << "\n";		
 	*file << "ProgramData" << "\n";		
 	*file << "RivaTuner" << "\n";		
-	//*file << "steamapps" << "\n";		
+	*file << "steamapps" << "\n";		
 	*file << "temp" << "\n";		
 	*file << "Users" << "\n";		
 	*file << "Videos" << "\n";		

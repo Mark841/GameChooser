@@ -14,16 +14,20 @@ public:
 	~FileManager();
 	void WriteLocalDataToFileOverwrite();
 	void WriteLocalDataToFileAppend();
-	void WriteWhitelistsToFileAppend(std::vector<std::string> whitelists);
+	void WriteWhitelistsToFileAppend();
+	void WriteCustomDirectoriesToFileAppend();
 
 	void ReadLocalDataFromFile();
 	void ReadWhitelistDataFromFile();
+	void ReadCustomDirectoriesDataFromFile();
 
 private:
 	int ProcessFileLineInt(std::string value);
 	std::vector<std::string> ProcessFileLineStringVector(std::string value);
 	std::vector<int> ProcessFileLineIntVector(std::string value);
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
+
+	std::vector<std::string> ReadLinesFromFile(std::fstream* file);
 
 	void WriteDefaultWhitelistsToFile(std::fstream* file);
 };
