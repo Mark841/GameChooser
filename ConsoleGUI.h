@@ -1,3 +1,6 @@
+#ifndef CONSOLE_GUI_HPP
+#define CONSOLE_GUI_HPP
+
 #pragma once
 #include "GUIInterface.h"
 #include <iostream>
@@ -21,3 +24,5 @@ private:
 	std::vector<std::string> GetCustomDirectoryNames(std::string platformName);
 	bool GetYesOrNoFromUser(std::string aboutValue);
 };
+
+#endif CONSOLE_GUI_HPP

@@ -1,3 +1,6 @@
+#ifndef GUI_HPP
+#define	GUI_HPP
+
 #pragma once
 #include "GUIInterface.h"
 
@@ -16,3 +19,5 @@ public:
 	int DisplayStores();
 	int DisplayStoresWithSearch();
 };
+
+#endif GUI_HPP

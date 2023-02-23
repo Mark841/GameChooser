@@ -19,7 +19,7 @@ void BackEndAlgorithms::InitLocalDataSizes()
 {
     std::vector<char> drives = GetDriveNames();
 
-    localFileData->storeAmount = 4;
+    localFileData->storeAmount = NUMBER_OF_STORES;
     localFileData->amountOfDrives = drives.size();
 
     localFileData->driveNames.resize(localFileData->amountOfDrives);

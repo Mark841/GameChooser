@@ -1,6 +1,10 @@
 #pragma once
 #include "GlobalConstants.h"
 #include "BackEndAlgorithms.h"
+#ifndef FILE_MANAGER_HPP
+#define FILE_MANAGER_HPP
+
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -32,3 +36,5 @@ private:
 
 	void WriteDefaultWhitelistsToFile(std::fstream* file);
 };
+
+#endif FILE_MANAGER_HPP

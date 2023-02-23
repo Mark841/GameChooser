@@ -1,3 +1,6 @@
+#ifndef BACKEND_ALGORITHMS_HPP
+#define	BACKEND_ALGORITHMS_HPP
+
 #pragma once
 #include "windows.h"
 #include "fileapi.h"
@@ -112,3 +115,5 @@ private:
 	DirectoryData* whitelistsData;
 	DirectoryData* customDirectoryData;
 };
+
+#endif BACKEND_ALGORITHMS_HPP

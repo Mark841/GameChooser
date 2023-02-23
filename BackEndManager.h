@@ -1,3 +1,6 @@
+#ifndef BACKEND_MANAGER_HPP
+#define	BACKEND_MANAGER_HPP
+
 #pragma once
 #include "BackEndAlgorithms.h"
 #include "FileManager.h"
@@ -39,3 +42,5 @@ protected:
 	FileManager* fileHandler = nullptr;
 	BackEndAlgorithms* algorithms = nullptr;
 };
+
+#endif BACKEND_MANAGER_HPP

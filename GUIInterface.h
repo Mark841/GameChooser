@@ -1,3 +1,6 @@
+#ifndef GUI_INTERFACE_HPP
+#define GUI_INTERFACE_HPP
+
 #pragma once
 #include "GlobalConstants.h"
 #include "BackEndManager.h"
@@ -24,3 +27,5 @@ public:
 protected:
 	BackEndManager* manager;
 };
+
+#endif GUI_INTERFACE_HPP
