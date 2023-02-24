@@ -119,6 +119,69 @@ std::string BackEndAlgorithms::GetNoOfStoresOnDriveString()
     return GetStringFromIntArray(localFileData->numberOfStoresOnDrive);
 }
 
+//TODO MakeGeneric
+std::string BackEndAlgorithms::GetStringFromIntArray(std::vector<int> intArray)
+{
+    std::string fileEntryLine = "";
+    for (unsigned i = 0; i < intArray.size(); i++)
+    {
+        fileEntryLine += std::to_string(intArray[i]);
+        if (i != intArray.size() - 1) {
+            fileEntryLine += "|";
+        }
+    }
+    return fileEntryLine;
+}
+std::string BackEndAlgorithms::GetStringFromStringArray(std::vector<std::string> stringArray)
+{
+    std::string fileEntryLine = "";
+    for (unsigned int i = 0; i < stringArray.size(); i++)
+    {
+        fileEntryLine += stringArray[i];
+        if (i != stringArray.size() - 1) {
+            fileEntryLine += "|";
+        }
+    }
+    return fileEntryLine;
+}
+std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DStringArray(std::vector<std::vector<std::string>> stringArray)
+{
+    std::vector<std::string> fileEntries;
+    std::string fileEntryLine = "";
+    for (std::vector<std::string> driveString : stringArray)
+    {
+        fileEntryLine = "";
+        for (unsigned int i = 0; i < driveString.size(); i++)
+        {
+            fileEntryLine += driveString[i];
+            if (i != driveString.size() - 1) {
+                fileEntryLine += "|";
+            }
+        }
+        fileEntries.push_back(fileEntryLine);
+    }
+    return fileEntries;
+}
+std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vector<std::vector<bool>> boolArray)
+{
+    std::vector<std::string> fileEntries;
+    std::string fileEntryLine = "";
+    for (std::vector<bool> driveString : boolArray)
+    {
+        fileEntryLine = "";
+        for (unsigned int i = 0; i < driveString.size(); i++)
+        {
+            fileEntryLine += std::to_string(driveString[i]);
+            if (i != driveString.size() - 1) {
+                fileEntryLine += "|";
+            }
+        }
+        fileEntries.push_back(fileEntryLine);
+    }
+    return fileEntries;
+}
+
+
 //TODO
 std::vector<std::string> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 {
@@ -306,68 +369,6 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     }
 
     return directory.substr(index)._Equal("\\" + subdirectory);
-}
-
-//TODO MakeGeneric
-std::string BackEndAlgorithms::GetStringFromIntArray(std::vector<int> intArray)
-{
-    std::string fileEntryLine = "";
-    for (unsigned i = 0; i < intArray.size(); i++)
-    {
-        fileEntryLine += std::to_string(intArray[i]);
-        if (i != intArray.size() - 1) {
-            fileEntryLine += "|";
-        }
-    }
-    return fileEntryLine;
-}
-std::string BackEndAlgorithms::GetStringFromStringArray(std::vector<std::string> stringArray)
-{
-    std::string fileEntryLine = "";
-    for (unsigned int i = 0; i < stringArray.size(); i++)
-    {
-        fileEntryLine += stringArray[i];
-        if (i != stringArray.size() - 1) {
-            fileEntryLine += "|";
-        }
-    }
-    return fileEntryLine;
-}
-std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DStringArray(std::vector<std::vector<std::string>> stringArray)
-{
-    std::vector<std::string> fileEntries;
-    std::string fileEntryLine = "";
-    for (std::vector<std::string> driveString : stringArray)
-    {
-        fileEntryLine = "";
-        for (unsigned int i = 0; i < driveString.size(); i++)
-        {
-            fileEntryLine += driveString[i];
-            if (i != driveString.size() - 1) {
-                fileEntryLine += "|";
-            }
-        }
-        fileEntries.push_back(fileEntryLine);
-    }
-    return fileEntries;
-}
-std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vector<std::vector<bool>> boolArray)
-{
-    std::vector<std::string> fileEntries;
-    std::string fileEntryLine = "";
-    for (std::vector<bool> driveString : boolArray)
-    {
-        fileEntryLine = "";
-        for (unsigned int i = 0; i < driveString.size(); i++)
-        {
-            fileEntryLine += std::to_string(driveString[i]);
-            if (i != driveString.size() - 1) {
-                fileEntryLine += "|";
-            }
-        }
-        fileEntries.push_back(fileEntryLine);
-    }
-    return fileEntries;
 }
 
 //TODO - Store custom directory names in a txt like the whitelists so can be used across several runs of program and don't have to be entered every time
