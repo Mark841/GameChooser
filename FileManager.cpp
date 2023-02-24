@@ -105,20 +105,25 @@ void FileManager::WriteWhitelistsToFileAppend()
 
 	file.close();
 }
-void FileManager::WriteCustomDirectoriesToFileAppend()
+void FileManager::WriteCustomDirectoriesToFileOverwrite()
 {
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	std::vector<std::string> customDirectories = algorithms->GetCustomDirectoryData()->directoryNames;
+	CustomDirectoryData* customDirectories = algorithms->GetCustomDirectoryData();
+	std::vector<std::vector<std::string>> allStores{
+	customDirectories->steamDirectories,
+	customDirectories->originDirectories,
+	customDirectories->ubisoftDirectories,
+	customDirectories->epicDirectories };
 
-	std::fstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
-	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::ios::app);
+	std::ofstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
+	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::ios::out);
 
 	if (!file.is_open())
 	{
 		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << CUSTOM_DIRECTORY_FILE_FILENAME << " OR PLEASE CLOSE THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
 	}
 
-	WriteToFile(&file, customDirectories);
+	WriteToFile(&file, allStores);
 
 	file.close();
 }
@@ -174,7 +179,7 @@ void FileManager::ReadWhitelistDataFromFile()
 {
 	std::fstream file(WHITELIST_FILE_FILENAME);
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	DirectoryData* whitelistData = algorithms->GetWhitelistData();
+	WhitelistData* whitelistData = algorithms->GetWhitelistData();
 
 	file.open(WHITELIST_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -205,7 +210,7 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 {
 	std::fstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	DirectoryData* customDirectoryData = algorithms->GetCustomDirectoryData();
+	CustomDirectoryData* customDirectoryData = algorithms->GetCustomDirectoryData();
 
 	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -213,7 +218,15 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 		std::cout << "ISSUE WITH THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
 	}
 
-	customDirectoryData->directoryNames = ReadLinesFromFile(&file);
+	std::vector<std::string> lines = ReadLinesFromFile(&file);
+
+	for (unsigned int i = 0; i < lines.size(); i++)
+	{
+		if (i == 0) { customDirectoryData->steamDirectories = ProcessFileLineStringVector(lines[i]); }
+		if (i == 1) { customDirectoryData->originDirectories = ProcessFileLineStringVector(lines[i]); }
+		if (i == 2) { customDirectoryData->ubisoftDirectories = ProcessFileLineStringVector(lines[i]); }
+		if (i == 3) { customDirectoryData->epicDirectories = ProcessFileLineStringVector(lines[i]); }
+	}
 
 	file.close();
 }
@@ -280,6 +293,24 @@ void FileManager::WriteToFile(std::fstream* file, std::vector<std::string> lines
 	{
 		*file << line << "\n";
 	}
+}
+void FileManager::WriteToFile(std::fstream* file, std::vector<std::vector<std::string>> lines)
+{
+	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DStringArray(lines);
+	WriteToFile(file, toWrite);
+}
+void FileManager::WriteToFile(std::ofstream* file, std::vector<std::string> lines)
+{
+	file->clear();
+	for (std::string line : lines)
+	{
+		*file << line << "\n";
+	}
+}
+void FileManager::WriteToFile(std::ofstream* file, std::vector<std::vector<std::string>> lines)
+{
+	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DStringArray(lines);
+	WriteToFile(file, toWrite);
 }
 
 std::vector<std::string>  FileManager::ReadLinesFromFile(std::fstream* file)

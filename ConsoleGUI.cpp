@@ -17,10 +17,12 @@ void ConsoleGUI::NewStoresInstalledSinceLastRun()
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 	if (GetYesOrNoFromUser("SCAN YOUR MACHINE for STORES and GAME FOLDERS again"))
 	{
-		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
-		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
-		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
+		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
+		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
+
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
 		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
 	}
@@ -120,12 +122,12 @@ int ConsoleGUI::DisplayScanByDrive()
 			std::cin >> driveName;
 		}
 
-		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
-		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
-		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
+		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
+		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 
-		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
 		//TODO - remove all custom vectors and make the method use the customData struct
 		manager->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
@@ -135,12 +137,12 @@ int ConsoleGUI::DisplayScanByDrive()
 	{
 		std::cout << "Specify store or game folder locations has been selected" << std::endl;
 
-		std::vector<std::string> customSteam = GetCustomDirectoryNames("STEAM");
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames("ORIGIN");
-		std::vector<std::string> customUbisoft = GetCustomDirectoryNames("UBISOFT");
-		std::vector<std::string> customEpic = GetCustomDirectoryNames("EPIC");
+		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
+		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 
-		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileAppend();
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
 		//TODO - remove all custom vectors and make the method use the customData struct
 		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
@@ -337,9 +339,11 @@ int ConsoleGUI::DisplayStoresWithSearch()
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platformName)
+std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 {
+	std::string platformName = StoreToString(store);
 	std::vector<std::string> custom;
+
 	std::cout << "If you have any CUSTOM DIRECTORY names for your " << platformName << " games library, please enter each name and then press ENTER, if you have no custom directory names please type 'n' or 'no' and press ENTER: " << std::endl;
 	std::string customDirectory = "null";
 	while (true)
@@ -357,7 +361,7 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(std::string platfor
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-	manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(custom);
+	manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(store, custom);
 	return custom;
 }
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)

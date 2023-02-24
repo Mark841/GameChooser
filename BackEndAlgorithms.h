@@ -9,27 +9,6 @@
 #include <string>
 #include <vector>
 
-struct StoresFile
-{
-	bool exists = false;
-	int storeAmount = 0;
-	int amountOfDrives = 0;
-	std::vector<std::string> driveNames;
-	// Layout of 2d arrays
-	// [[STEAM],[ORIGIN],[UBISOFT],[EPIC],[ROCKSTAR],[BLIZZARD]]
-	std::vector<std::vector<std::string>> folderLocationsOnDrive;
-	std::vector<std::vector<std::string>> storeLocationsOnDrive;
-	std::vector<std::vector<bool>> isFolderOnDrive;
-	std::vector<std::vector<bool>> isStoreOnDrive;
-	std::vector<int> numberOfFoldersOnDrive;
-	std::vector<int> numberOfStoresOnDrive;
-	std::string lastPlayed = "null";
-};
-struct DirectoryData
-{
-	std::vector<std::string> directoryNames = {};
-};
-
 class BackEndAlgorithms
 {
 public:
@@ -52,6 +31,11 @@ public:
 	std::string GetNoOfFoldersOnDriveString();
 	std::string GetNoOfStoresOnDriveString();
 
+	std::string GetStringFromIntArray(const std::vector<int> intArray);
+	std::string GetStringFromStringArray(const std::vector<std::string> stringArray);
+	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
+	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
+
 	std::vector<std::string> GetGamesAlphabetically(bool descending);
 	std::vector<std::vector<std::string>> GetGamesByDrive();
 	std::vector<std::vector<std::string>> GetGamesByStore();
@@ -73,12 +57,25 @@ public:
 		localFileData->lastPlayed = lastPlayed;
 	}
 	inline StoresFile* GetLocalData() { return localFileData; }
-	inline DirectoryData* GetWhitelistData() { return whitelistsData; }
-	inline DirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
-	inline void AddToCustomDirectoryData(std::vector<std::string> dataVector) {
-		for (std::string data : dataVector)
+	inline WhitelistData* GetWhitelistData() { return whitelistsData; }
+	inline CustomDirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
+	inline void AddToCustomDirectoryData(Stores store, std::vector<std::string> dataVector) {
+		switch (store)
 		{
-			customDirectoryData->directoryNames.push_back(data);
+		case Stores::STEAM:
+			for (std::string data : dataVector)	{ customDirectoryData->steamDirectories.push_back(data); }
+			break;
+		case Stores::ORIGIN:
+			for (std::string data : dataVector) { customDirectoryData->originDirectories.push_back(data); }
+			break;
+		case Stores::UBISOFT:
+			for (std::string data : dataVector) { customDirectoryData->ubisoftDirectories.push_back(data); }
+			break;
+		case Stores::EPIC:
+			for (std::string data : dataVector) { customDirectoryData->epicDirectories.push_back(data); }
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -87,8 +84,8 @@ public:
 private:
 	BackEndAlgorithms() { 
 		localFileData = new StoresFile(); 
-		whitelistsData = new DirectoryData(); 
-		customDirectoryData = new DirectoryData();
+		whitelistsData = new WhitelistData();
+		customDirectoryData = new CustomDirectoryData();
 	}
 
 	//TODO - remove all custom vectors and make the method use the customData struct
@@ -102,18 +99,14 @@ private:
 	bool IsSubpathOfAlternateStore(const std::string path, const std::string currentStoreName);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
-	std::string GetStringFromIntArray(const std::vector<int> intArray);
-	std::string GetStringFromStringArray(const std::vector<std::string> stringArray);
-	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
-	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
 
 	//TODO - remove all custom vectors and make the method use the customData struct
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;
-	DirectoryData* whitelistsData;
-	DirectoryData* customDirectoryData;
+	WhitelistData* whitelistsData;
+	CustomDirectoryData* customDirectoryData;
 };
 
 #endif BACKEND_ALGORITHMS_HPP

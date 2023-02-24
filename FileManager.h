@@ -19,7 +19,7 @@ public:
 	void WriteLocalDataToFileOverwrite();
 	void WriteLocalDataToFileAppend();
 	void WriteWhitelistsToFileAppend();
-	void WriteCustomDirectoriesToFileAppend();
+	void WriteCustomDirectoriesToFileOverwrite();
 
 	void ReadLocalDataFromFile();
 	void ReadWhitelistDataFromFile();
@@ -32,6 +32,9 @@ private:
 	std::vector<bool> ProcessFileLineBoolVector(std::string value);
 
 	void WriteToFile(std::fstream* file, std::vector<std::string> lines);
+	void WriteToFile(std::fstream* file, std::vector<std::vector<std::string>> lines);
+	void WriteToFile(std::ofstream* file, std::vector<std::string> lines);
+	void WriteToFile(std::ofstream* file, std::vector<std::vector<std::string>> lines);
 	std::vector<std::string> ReadLinesFromFile(std::fstream* file);
 
 	void WriteDefaultWhitelistsToFile(std::fstream* file);
