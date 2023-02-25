@@ -19,6 +19,7 @@ public:
 	void WriteLocalDataToFileOverwrite();
 	void WriteLocalDataToFileAppend();
 	void WriteWhitelistsToFileAppend();
+	void WriteWhitelistsToFileOverwrite();
 	void WriteCustomDirectoriesToFileOverwrite();
 
 	void ReadLocalDataFromFile();
@@ -38,6 +39,7 @@ private:
 	std::vector<std::string> ReadLinesFromFile(std::fstream* file);
 
 	void WriteDefaultWhitelistsToFile(std::fstream* file);
+	void WriteDefaultWhitelistsToFile(std::ofstream* file);
 };
 
 #endif FILE_MANAGER_HPP

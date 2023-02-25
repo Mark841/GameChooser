@@ -59,6 +59,9 @@ public:
 	inline StoresFile* GetLocalData() { return localFileData; }
 	inline WhitelistData* GetWhitelistData() { return whitelistsData; }
 	inline CustomDirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
+	inline void AddToWhitelistData(std::vector<std::string> dataVector) {
+		for (std::string data : dataVector) { whitelistsData->directoryNames.push_back(data); }
+	}
 	inline void AddToCustomDirectoryData(Stores store, std::vector<std::string> dataVector) {
 		switch (store)
 		{

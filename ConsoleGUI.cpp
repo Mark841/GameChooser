@@ -37,11 +37,12 @@ void ConsoleGUI::DisplayMainMenu()
 	{
 		std::cout << "\n\n\nHello and welcome to the PC Game Store combiner, please select an option from below" << std::endl;
 		std::cout << "1 - Scan system for stores (by drive or all drives)" << std::endl;
-		std::cout << "2 - Specify store or game folder locations" << std::endl;
-		std::cout << "3 - View all games on system" << std::endl;
-		std::cout << "4 - Play last played game" << std::endl;
-		std::cout << "5 - Open stores" << std::endl;
-		std::cout << "6 - Search for game on stores" << std::endl;
+		std::cout << "2 - ACCURACY BOOSTER: Specify search/scan store or game directory names OR add additional whitelist directory names" << std::endl;
+		std::cout << "3 - Give a random installed game to play" << std::endl;
+		std::cout << "4 - View all games on system" << std::endl;
+		std::cout << "5 - Play last played game" << std::endl;
+		std::cout << "6 - Open stores" << std::endl;
+		std::cout << "7 - Search for game on stores" << std::endl;
 		std::cout << "0 - EXIT" << std::endl;
 		std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 		std::cout << "Please enter a numbered option: ";
@@ -63,17 +64,21 @@ void ConsoleGUI::DisplayMainMenu()
 			userInput = DisplayFolderIdentifier();
 			break;
 		case 3:
+			std::cout << "Give a random installed game to play" << std::endl;
+			userInput = DisplayRandomGame();
+			break;
+		case 4:
 			std::cout << "View all games on system page has been selected" << std::endl;
 			userInput = DisplayAllGames();
 			break;
-		case 4:
+		case 5:
 			std::cout << "Play last played game has been selected" << std::endl;
 			break;
-		case 5:
+		case 6:
 			std::cout << "Open stores page has been selected" << std::endl;
 			userInput = DisplayStores();
 			break;
-		case 6:
+		case 7:
 			std::cout << "Search for game on stores page has been selected" << std::endl;
 			userInput = DisplayStoresWithSearch();
 			break;
@@ -156,14 +161,13 @@ int ConsoleGUI::DisplayScanByDrive()
 		return -1;
 	}
 }
-
-//TODO - Specify store or game folder locations page has been selected
+//TOTEST
 int ConsoleGUI::DisplayFolderIdentifier()
 {
 	int userInput;
-	std::cout << "\n\nHello and welcome to the PC Game Store combiners TODO, please select an option from below" << std::endl;
-	std::cout << "1 - TODO" << std::endl;
-	std::cout << "2 - TODO" << std::endl;
+	std::cout << "\n\nHello and welcome to the PC Game Store combiners specifying store or game folder locations on drive for next scan or whitelist directory names to not search in (can drastically speed up drive scanning), please select an option from below" << std::endl;
+	std::cout << "1 - Enter custom directory names" << std::endl;
+	std::cout << "2 - Enter custom directory names" << std::endl;
 	std::cout << "3 - Return to Main Menu" << std::endl;
 	std::cout << "0 - EXIT" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
@@ -178,11 +182,27 @@ int ConsoleGUI::DisplayFolderIdentifier()
 	switch (userInput)
 	{
 	case 1:
-		std::cout << "TODO has been selected" << std::endl;
+	{
+		std::cout << "Entering new custom search directory names has been selected" << std::endl;
+
+		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
+		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
+		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
+
+		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
+
 		break;
+	}
 	case 2:
-		std::cout << "TODO has been selected" << std::endl;
+	{
+		std::cout << "Entering new whitelist directory names has been selected" << std::endl;
+		std::vector<std::string> newWhitelists = GetVectorOfStringsFromUser("WHITELIST DIRECTORY NAMES");
+		manager->GetAlgorithmsHandler()->AddToWhitelistData(newWhitelists);
+		manager->GetFileManagerHandler()->WriteWhitelistsToFileOverwrite();
+
 		break;
+	}
 	case 3:
 		std::cout << "Returning to Main Menu" << std::endl;
 		break;
@@ -190,6 +210,12 @@ int ConsoleGUI::DisplayFolderIdentifier()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+}
+
+//TODO - Give a random installed game to play
+int ConsoleGUI::DisplayRandomGame()
+{
+	return 0;
 }
 
 //TODO - View all games on system
@@ -338,6 +364,29 @@ int ConsoleGUI::DisplayStoresWithSearch()
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
+
+std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(std::string purpose)
+{
+	std::vector<std::string> custom;
+	std::cout << "Please enter the names for your " << purpose << ", please enter each name and then press ENTER, if you have no more to add please type 'n' or 'no' and press ENTER: " << std::endl;
+	std::string customData = "null";
+	while (true)
+	{
+		std::cout << "\tCUSTOM " << purpose << " NAME: ";
+		std::getline(std::cin, customData);
+		if (customData == "n" || customData == "no")
+		{
+			break;
+		}
+		if (customData != "")
+		{
+			custom.push_back(customData);
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	return custom;
+}
 
 std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 {

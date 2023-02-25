@@ -105,6 +105,24 @@ void FileManager::WriteWhitelistsToFileAppend()
 
 	file.close();
 }
+void FileManager::WriteWhitelistsToFileOverwrite()
+{
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	std::vector<std::string> whitelists = algorithms->GetWhitelistData()->directoryNames;
+
+	std::ofstream file(WHITELIST_FILE_FILENAME);
+	file.open(WHITELIST_FILE_FILENAME, std::ios::app);
+
+	if (!file.is_open())
+	{
+		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << WHITELIST_FILE_FILENAME << " OR PLEASE CLOSE THE " << WHITELIST_FILE_FILENAME << " FILE" << std::endl;
+		WriteDefaultWhitelistsToFile(&file);
+	}
+
+	WriteToFile(&file, whitelists);
+
+	file.close();
+}
 void FileManager::WriteCustomDirectoriesToFileOverwrite()
 {
 	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
@@ -330,6 +348,32 @@ void FileManager::WriteDefaultWhitelistsToFile(std::fstream* file)
 {
 	file->clear();
 	file->seekg(0, std::ios::end);
+	
+	*file << "hiberfil" << "\n";
+	*file << "swapfile" << "\n";
+	*file << "pagefile" << "\n";
+	*file << "DumpStack" << "\n";
+	*file << "Audio" << "\n";		
+	*file << "lang" << "\n";		
+	*file << "Languages" << "\n";		
+	*file << "MinGW" << "\n";		
+	*file << "Microsoft" << "\n";		
+	*file << "Music" << "\n";		
+	*file << "Phone" << "\n";		
+	*file << "Photos" << "\n";		
+	*file << "ProgramData" << "\n";		
+	*file << "RivaTuner" << "\n";		
+	*file << "steamapps" << "\n";		
+	*file << "temp" << "\n";		
+	*file << "Users" << "\n";		
+	*file << "Videos" << "\n";		
+	*file << "Windows" << "\n";		
+	*file << "WinREAgent" << "\n";		
+	*file << "$Recycle.Bin" << "\n";		
+}
+void FileManager::WriteDefaultWhitelistsToFile(std::ofstream* file)
+{
+	file->clear();
 	
 	*file << "hiberfil" << "\n";
 	*file << "swapfile" << "\n";
