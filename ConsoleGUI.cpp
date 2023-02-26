@@ -24,7 +24,7 @@ void ConsoleGUI::NewStoresInstalledSinceLastRun()
 
 		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
-		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+		manager->ScanAllDrives();
 	}
 }
 
@@ -134,8 +134,7 @@ int ConsoleGUI::DisplayScanByDrive()
 
 		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
-		//TODO - remove all custom vectors and make the method use the customData struct
-		manager->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
+		manager->ScanDrive(driveName);
 		break;
 	}
 	case 2:
@@ -149,8 +148,7 @@ int ConsoleGUI::DisplayScanByDrive()
 
 		manager->GetFileManagerHandler()->WriteCustomDirectoriesToFileOverwrite();
 
-		//TODO - remove all custom vectors and make the method use the customData struct
-		manager->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+		manager->ScanAllDrives();
 		break;
 	}
 	case 3:

@@ -18,21 +18,22 @@ public:
 			algorithms->FindStoresOnAllDrives();
 			fileHandler->WriteLocalDataToFileOverwrite();
 		}
+		algorithms->GetAllGamesFromFolders();
 	}
 	~BackEndManager() {
 		delete fileHandler;
 		delete algorithms;
 	}
 
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void ScanDrive(char driveName, std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic) {
-		algorithms->ScanDrive(driveName, customSteam, customOrigin, customUbisoft, customEpic);
+	void ScanDrive(char driveName) {
+		algorithms->ScanDrive(driveName);
 		fileHandler->WriteLocalDataToFileOverwrite();
+		algorithms->GetAllGamesFromFolders();
 	}
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void ScanAllDrives(std::vector<std::string> customSteam, std::vector<std::string> customOrigin, std::vector<std::string> customUbisoft, std::vector<std::string> customEpic) {
-		algorithms->ScanAllDrives(customSteam, customOrigin, customUbisoft, customEpic);
+	void ScanAllDrives() {
+		algorithms->ScanAllDrives();
 		fileHandler->WriteLocalDataToFileOverwrite();
+		algorithms->GetAllGamesFromFolders();
 	}
 
 	inline FileManager* GetFileManagerHandler() { return fileHandler; }

@@ -173,15 +173,15 @@ void FileManager::ReadLocalDataFromFile()
 		// Drive names
 		else if (i == 2) { localFileData->driveNames = ProcessFileLineStringVector(line); }
 		// Folder locations
-		else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) { localFileData->folderLocationsOnDrive.push_back(ProcessFileLineStringVector(line)); }
+		else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) { localFileData->directoryLocationsOnDrive.push_back(ProcessFileLineStringVector(line)); }
 		// Store locations
 		else if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) { localFileData->storeLocationsOnDrive.push_back(ProcessFileLineStringVector(line)); }
 		// Is folder on drive
-		else if (i == 13 || i == 14 || i == 15 || i == 16 || i == 17) { localFileData->isFolderOnDrive.push_back(ProcessFileLineBoolVector(line)); }
+		else if (i == 13 || i == 14 || i == 15 || i == 16 || i == 17) { localFileData->isDirectoryOnDrive.push_back(ProcessFileLineBoolVector(line)); }
 		// Is store on drive
 		else if (i == 18 || i == 19 || i == 20 || i == 21 || i == 22) { localFileData->isStoreOnDrive.push_back(ProcessFileLineBoolVector(line)); }
 		// num of folders on drive
-		else if (i == 23) { localFileData->numberOfFoldersOnDrive = ProcessFileLineIntVector(line); }
+		else if (i == 23) { localFileData->numberOfDirectoriesOnDrive = ProcessFileLineIntVector(line); }
 		// num of stores on drive
 		else if (i == 24) { localFileData->numberOfStoresOnDrive = ProcessFileLineIntVector(line); }
 		else if (i == 25)
@@ -234,6 +234,18 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 	if (!file.is_open())
 	{
 		std::cout << "ISSUE WITH THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
+	}
+
+	int numLines = 0;
+	std::string unused;
+	while (std::getline(file, unused))
+	{
+		++numLines;
+	}
+
+	if (numLines == 0)
+	{
+		WriteDefaultDirectoriesToFile(&file);
 	}
 
 	std::vector<std::string> lines = ReadLinesFromFile(&file);
@@ -396,4 +408,15 @@ void FileManager::WriteDefaultWhitelistsToFile(std::ofstream* file)
 	*file << "Windows" << "\n";		
 	*file << "WinREAgent" << "\n";		
 	*file << "$Recycle.Bin" << "\n";		
+}
+
+void FileManager::WriteDefaultDirectoriesToFile(std::fstream* file)
+{
+	file->clear();
+	file->seekg(0, std::ios::end);
+
+	*file << "Steam" << "\n";
+	*file << "Origin" << "\n";
+	*file << "Ubisoft" << "\n";
+	*file << "Epic|Epic Games" << "\n";
 }

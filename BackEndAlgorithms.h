@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <map>
 
 class BackEndAlgorithms
 {
@@ -17,10 +18,10 @@ public:
 
 	void InitLocalDataSizes();
 
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void ScanDrive(const char driveName, const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void ScanAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
+	void ScanDrive(const char driveName);
+	void ScanAllDrives();
+
+	bool IsStringNullOrWhitespace(std::string string);
 
 	std::vector<char> GetDriveNames();
 	std::string GetDriveNamesString();
@@ -36,6 +37,7 @@ public:
 	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
 	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
 
+	void GetAllGamesFromFolders();
 	std::vector<std::string> GetGamesAlphabetically(bool descending);
 	std::vector<std::vector<std::string>> GetGamesByDrive();
 	std::vector<std::vector<std::string>> GetGamesByStore();
@@ -48,11 +50,11 @@ public:
 		localFileData->amountOfDrives = amountOfDrives;
 		localFileData->storeAmount = storeAmount;
 		localFileData->driveNames = driveNames;
-		localFileData->folderLocationsOnDrive = folderLocationsOnDrive;
+		localFileData->directoryLocationsOnDrive = folderLocationsOnDrive;
 		localFileData->storeLocationsOnDrive = storeLocationsOnDrive;
-		localFileData->isFolderOnDrive = isFolderOnDrive;
+		localFileData->isDirectoryOnDrive = isFolderOnDrive;
 		localFileData->isStoreOnDrive = isStoreOnDrive;
-		localFileData->numberOfFoldersOnDrive = numberOfFoldersOnDrive;
+		localFileData->numberOfDirectoriesOnDrive = numberOfFoldersOnDrive;
 		localFileData->numberOfStoresOnDrive = numberOfStoresOnDrive;
 		localFileData->lastPlayed = lastPlayed;
 	}
@@ -91,9 +93,8 @@ private:
 		customDirectoryData = new CustomDirectoryData();
 	}
 
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
-	bool SearchForStoresAndFolders(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
+	void FindStoresOnDrive(StoresFile* localData, const int driveIndex);
+	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
 		int depth = 0, bool foundSteam = false, bool foundOrigin = false, bool foundUbisoft = false, bool foundEpic = false);
 
 	bool IsPathWhitelisted(const std::string path);
@@ -102,14 +103,18 @@ private:
 	bool IsSubpathOfAlternateStore(const std::string path, const std::string currentStoreName);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 
+	std::string SplitStringAtUpperCase(std::string origString);
+	bool DoesDirectoryContainExe(std::filesystem::path dir);
+	std::string GetExeInDirectory(std::filesystem::path dir);
 
-	//TODO - remove all custom vectors and make the method use the customData struct
-	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic);
+	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
+
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;
 	WhitelistData* whitelistsData;
 	CustomDirectoryData* customDirectoryData;
+	std::vector<GameData> allGames;
 };
 
 #endif BACKEND_ALGORITHMS_HPP

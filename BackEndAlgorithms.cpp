@@ -24,23 +24,22 @@ void BackEndAlgorithms::InitLocalDataSizes()
 
     localFileData->driveNames.resize(localFileData->amountOfDrives);
     localFileData->numberOfStoresOnDrive.resize(localFileData->amountOfDrives);
-    localFileData->numberOfFoldersOnDrive.resize(localFileData->amountOfDrives);
-    localFileData->folderLocationsOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->numberOfDirectoriesOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->directoryLocationsOnDrive.resize(localFileData->amountOfDrives);
     localFileData->storeLocationsOnDrive.resize(localFileData->amountOfDrives);
-    localFileData->isFolderOnDrive.resize(localFileData->amountOfDrives);
+    localFileData->isDirectoryOnDrive.resize(localFileData->amountOfDrives);
     localFileData->isStoreOnDrive.resize(localFileData->amountOfDrives);
 
     for (int i = 0; i < localFileData->amountOfDrives; i++)
     {
-        (localFileData->folderLocationsOnDrive[i]).resize(localFileData->storeAmount);
+        (localFileData->directoryLocationsOnDrive[i]).resize(localFileData->storeAmount);
         (localFileData->storeLocationsOnDrive[i]).resize(localFileData->storeAmount);
-        (localFileData->isFolderOnDrive[i]).resize(localFileData->storeAmount);
+        (localFileData->isDirectoryOnDrive[i]).resize(localFileData->storeAmount);
         (localFileData->isStoreOnDrive[i]).resize(localFileData->storeAmount);
     }
 }
 
-//TODO - remove all custom vectors and make the method use the customData struct
-void BackEndAlgorithms::ScanDrive(char driveName, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+void BackEndAlgorithms::ScanDrive(char driveName)
 {
     StoresFile* localData = GetLocalData();
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
@@ -49,13 +48,12 @@ void BackEndAlgorithms::ScanDrive(char driveName, const std::vector<std::string>
     {
         if (localData->driveNames[drivesIndex].find(drive) != std::string_view::npos)
         {
-            FindStoresOnDrive(localData, drivesIndex, customSteam, customOrigin, customUbisoft, customEpic);
+            FindStoresOnDrive(localData, drivesIndex);
         }
         drivesIndex++;
     }
 }
-//TODO - remove all custom vectors and make the method use the customData struct
-void BackEndAlgorithms::ScanAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+void BackEndAlgorithms::ScanAllDrives()
 {
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
     int driveIndex = 0;
@@ -63,11 +61,20 @@ void BackEndAlgorithms::ScanAllDrives(const std::vector<std::string> customSteam
     {
         driveIndex++;
         std::cout << "Scanning drive: " << driveIndex << std::endl;
-        ScanDrive(drive, customSteam, customOrigin, customUbisoft, customEpic);
+        ScanDrive(drive);
         std::cout << "Scanned drive: " << driveIndex << "\n\tDrives percentage complete: " << (driveIndex * 100) / localFileData->amountOfDrives << std::endl;
     }
 
     localFileData->exists = true;
+}
+
+bool BackEndAlgorithms::IsStringNullOrWhitespace(std::string string)
+{
+    if (string == "" || string == "null" || string == "NULL")
+    {
+        return true;
+    }
+    return false;
 }
 
 std::vector<char> BackEndAlgorithms::GetDriveNames()
@@ -96,7 +103,7 @@ std::string BackEndAlgorithms::GetDriveNamesString()
 }
 std::vector<std::string> BackEndAlgorithms::GetFolderLocationsStrings()
 {
-    return GetStringsFrom2DStringArray(localFileData->folderLocationsOnDrive);
+    return GetStringsFrom2DStringArray(localFileData->directoryLocationsOnDrive);
 }
 std::vector<std::string> BackEndAlgorithms::GetStoreLocationsStrings()
 {
@@ -104,7 +111,7 @@ std::vector<std::string> BackEndAlgorithms::GetStoreLocationsStrings()
 }
 std::vector<std::string> BackEndAlgorithms::GetIsFolderOnDriveStrings()
 {
-    return GetStringsFrom2DBoolArray(localFileData->isFolderOnDrive);
+    return GetStringsFrom2DBoolArray(localFileData->isDirectoryOnDrive);
 }
 std::vector<std::string> BackEndAlgorithms::GetIsStoreOnDriveStrings()
 {
@@ -112,7 +119,7 @@ std::vector<std::string> BackEndAlgorithms::GetIsStoreOnDriveStrings()
 }
 std::string BackEndAlgorithms::GetNoOfFoldersOnDriveString()
 {
-    return GetStringFromIntArray(localFileData->numberOfFoldersOnDrive);
+    return GetStringFromIntArray(localFileData->numberOfDirectoriesOnDrive);
 }
 std::string BackEndAlgorithms::GetNoOfStoresOnDriveString()
 {
@@ -181,12 +188,53 @@ std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vecto
     return fileEntries;
 }
 
-
+//TODO - Can optimise by making a seperate method for each drive
+void BackEndAlgorithms::GetAllGamesFromFolders()
+{
+    int driveIndex = 0;
+    int storeIndex = 0;
+    for (std::vector<std::string> drive : localFileData->directoryLocationsOnDrive)
+    {
+        std::string driveName = localFileData->driveNames[driveIndex];
+        for (std::string store : drive)
+        {
+            std::vector<std::filesystem::path> subDirectories;
+            for (const auto& entry : std::filesystem::directory_iterator(store))
+            {
+                if (std::filesystem::is_directory(entry))
+                {
+                    subDirectories.push_back(entry.path());
+                }
+            }
+            // For each game in storeFolder
+            for (std::filesystem::path sf : subDirectories)
+            {
+                std::string gameDirectory = sf.string();
+                // If its trying to search something that isn't a directory AND if that directory has an exe in it - THEN assume its a game dir
+                if (std::filesystem::is_directory(gameDirectory) && DoesDirectoryContainExe(sf)
+                    && !IsSubpath(gameDirectory, "Ubisoft Game Launcher")
+                    && !IsSubpath(gameDirectory, "Epic Online Services"))
+                {
+                    GameData gameData;
+                    gameData.gameName = SplitStringAtUpperCase(sf.filename().string());
+                    gameData.gameDirectory = gameDirectory;
+                    gameData.gameExe = GetExeInDirectory(sf);
+                    gameData.store = STORE_ENUMS[storeIndex];
+                    gameData.drive = driveName[0]; // Use index 0 as want the first character which is drive letter
+                    allGames.push_back(gameData);
+                }
+            }
+            storeIndex++;
+        }
+        storeIndex = 0;
+        driveIndex++;
+    }
+}
 //TODO
 std::vector<std::string> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 {
     std::vector<std::string> games;
-    for (std::vector<std::string> drive : localFileData->folderLocationsOnDrive)
+    for (std::vector<std::string> drive : localFileData->directoryLocationsOnDrive)
     {
         for (std::string folder : drive)
         {
@@ -214,7 +262,7 @@ void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> cus
     {
         std::cout << "Scanning drive: " << drivesIndex << std::endl;
         localFileData->driveNames[drivesIndex] = drives[drivesIndex];
-        FindStoresOnDrive(localFileData, drivesIndex, customSteam, customOrigin, customUbisoft, customEpic);
+        FindStoresOnDrive(localFileData, drivesIndex);
         std::cout << "Scanned drive: " << drivesIndex + 1 << "\n\tDrives percentage complete: " << ((drivesIndex + 1) * 100) / localFileData->amountOfDrives << std::endl;
     }
 
@@ -223,20 +271,19 @@ void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> cus
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
 
-    //TODO - remove all custom vectors and make the method use the customData struct
-void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex)
 {
     int* noOfStores = new int;
     *noOfStores = 0;
     int* noOfFolders = new int;
     *noOfFolders = 0;
 
-    AllStores(localData, driveIndex, noOfStores, noOfFolders, customSteam, customOrigin, customUbisoft, customEpic);
+    AllStores(localData, driveIndex, noOfStores, noOfFolders);
 
     localData->numberOfStoresOnDrive[driveIndex] = *noOfStores;
-    localData->numberOfFoldersOnDrive[driveIndex] = *noOfFolders;
+    localData->numberOfDirectoriesOnDrive[driveIndex] = *noOfFolders;
 }
-bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steamDirectoryName, std::vector<std::string> originDirectoryName, std::vector<std::string> ubisoftDirectoryName, std::vector<std::string> epicDirectoryName, std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
+bool BackEndAlgorithms::SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
     int depth, bool foundSteam, bool foundOrigin, bool foundUbisoft, bool foundEpic)
 {
     // If its trying to search something that isn't a directory OR if it is over the maximum directory search depth
@@ -251,7 +298,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steam
 
     try
     {
-        for (std::string steamName : steamDirectoryName)
+        for (std::string steamName : customDirectoryData->steamDirectories)
         {
             if (!foundSteam && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, steamName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, steamName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
             {
@@ -259,7 +306,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steam
                 foundSteam = true;
             }
         }
-        for (std::string originName : originDirectoryName)
+        for (std::string originName : customDirectoryData->originDirectories)
         {
             if (!foundOrigin && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, originName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, originName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
             {
@@ -267,7 +314,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steam
                 foundOrigin = true;
             }
         }
-        for (std::string ubisoftName : ubisoftDirectoryName)
+        for (std::string ubisoftName : customDirectoryData->ubisoftDirectories)
         {
             if (!foundUbisoft && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, ubisoftName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, ubisoftName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
             {
@@ -275,7 +322,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steam
                 foundUbisoft = true;
             }
         }
-        for (std::string epicName : epicDirectoryName)
+        for (std::string epicName : customDirectoryData->epicDirectories)
         {
             if (!foundEpic && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, epicName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, epicName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
             {
@@ -317,7 +364,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::vector<std::string> steam
         if ((std::filesystem::status(sf).permissions() | std::filesystem::perms::others_read) == std::filesystem::status(sf).permissions())
         {
             std::string subFolder = sf.string();
-            if (SearchForStoresAndFolders(steamDirectoryName, originDirectoryName, ubisoftDirectoryName, epicDirectoryName, &subFolder, foundSteamLocationPath, foundOriginLocationPath, foundUbisoftLocationPath, foundEpicLocationPath, depth + 1, foundSteam, foundOrigin, foundUbisoft, foundEpic))
+            if (SearchForStoresAndFolders(&subFolder, foundSteamLocationPath, foundOriginLocationPath, foundUbisoftLocationPath, foundEpicLocationPath, depth + 1, foundSteam, foundOrigin, foundUbisoft, foundEpic))
             {
                 return true;
             }
@@ -371,38 +418,53 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     return directory.substr(index)._Equal("\\" + subdirectory);
 }
 
-//TODO - Store custom directory names in a txt like the whitelists so can be used across several runs of program and don't have to be entered every time
-//TODO - remove all custom vectors and make the method use the customData struct
-void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders, const std::vector<std::string> customSteam, const std::vector<std::string> customOrigin, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
+//TODO
+std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
+{
+    std::string seperatedString = origString;
+    return seperatedString;
+}
+//TODO
+bool BackEndAlgorithms::DoesDirectoryContainExe(std::filesystem::path dir)
+{
+    for (const auto& entry : std::filesystem::directory_iterator(dir))
+    {
+        if (entry.path().extension() == ".exe")
+        {
+            return true;
+        }
+    }
+    return false;
+}
+//TODO
+std::string BackEndAlgorithms::GetExeInDirectory(std::filesystem::path dir)
+{
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir))
+    {
+        if (entry.path().extension() == ".exe")
+        {
+            return entry.path().string();
+        }
+    }
+    return "null";
+}
+
+void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
-    std::vector<std::string> steamFolders;
-    steamFolders.push_back("Steam");
-    steamFolders.push_back("SteamLibrary");
-    steamFolders.insert(steamFolders.end(), customSteam.begin(), customSteam.end());
-    std::vector<std::string> originFolders;
-    originFolders.push_back("Origin");
-    originFolders.push_back("Origin Games");
-    originFolders.insert(originFolders.end(), customOrigin.begin(), customOrigin.end());
-    std::vector<std::string> ubisoftFolders;
-    ubisoftFolders.push_back("Ubisoft");
-    ubisoftFolders.insert(ubisoftFolders.end(), customUbisoft.begin(), customUbisoft.end());
-    std::vector<std::string> epicFolders;
-    epicFolders.push_back("Epic Games");
-    epicFolders.push_back("Epic");
-    epicFolders.insert(epicFolders.end(), customEpic.begin(), customEpic.end());
     std::string* currentSearchDirectoryPath = new std::string(*drive + ":\\");
     std::string* steamFoundLocation = new std::string("");
     std::string* originFoundLocation = new std::string("");
     std::string* ubisoftFoundLocation = new std::string("");
     std::string* epicFoundLocation = new std::string("");
 
-    SearchForStoresAndFolders(steamFolders, originFolders, ubisoftFolders, epicFolders, currentSearchDirectoryPath, steamFoundLocation, originFoundLocation, ubisoftFoundLocation, epicFoundLocation);
+    SearchForStoresAndFolders(currentSearchDirectoryPath, steamFoundLocation, originFoundLocation, ubisoftFoundLocation, epicFoundLocation);
 
     // Steam -------------------------------------------------------------------------------------------------
     if (*steamFoundLocation != "") {
-        localData->folderLocationsOnDrive[driveIndex][0] = *steamFoundLocation + STEAMAPPS_COMMON;
-        localData->isFolderOnDrive[driveIndex][0] = true;
+        localData->directoryLocationsOnDrive[driveIndex][0] = *steamFoundLocation + STEAMAPPS_COMMON;
+        localData->isDirectoryOnDrive[driveIndex][0] = true;
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*steamFoundLocation + "\\Steam.exe")) {
@@ -412,8 +474,8 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     }
     // Origin ------------------------------------------------------------------------------------------------
     if (*originFoundLocation != "") {
-        localData->folderLocationsOnDrive[driveIndex][1] = *originFoundLocation;
-        localData->isFolderOnDrive[driveIndex][1] = true;
+        localData->directoryLocationsOnDrive[driveIndex][1] = *originFoundLocation;
+        localData->isDirectoryOnDrive[driveIndex][1] = true;
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*originFoundLocation + "\\Origin.exe")) {
@@ -423,8 +485,8 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     }
     // Ubisoft -----------------------------------------------------------------------------------------------
     if (*ubisoftFoundLocation != "") {
-        localData->folderLocationsOnDrive[driveIndex][2] = *ubisoftFoundLocation;
-        localData->isFolderOnDrive[driveIndex][2] = true;
+        localData->directoryLocationsOnDrive[driveIndex][2] = *ubisoftFoundLocation;
+        localData->isDirectoryOnDrive[driveIndex][2] = true;
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*ubisoftFoundLocation + "\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe")) {
@@ -434,8 +496,8 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     }
     // Epic --------------------------------------------------------------------------------------------------
     if (*epicFoundLocation != "") {
-        localData->folderLocationsOnDrive[driveIndex][3] = *epicFoundLocation;
-        localData->isFolderOnDrive[driveIndex][3] = true;
+        localData->directoryLocationsOnDrive[driveIndex][3] = *epicFoundLocation;
+        localData->isDirectoryOnDrive[driveIndex][3] = true;
         (*noOfFolders)++;
     }
     //if (std::filesystem::exists(*epicFoundLocation + "\\Launcher\\Engine\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
