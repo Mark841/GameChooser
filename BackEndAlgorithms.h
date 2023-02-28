@@ -1,5 +1,6 @@
 #ifndef BACKEND_ALGORITHMS_HPP
 #define	BACKEND_ALGORITHMS_HPP
+#define _REGEX_MAX_STACK_COUNT 1000
 
 #pragma once
 #include "windows.h"
@@ -8,7 +9,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
-#include <map>
+#include <regex>
 
 class BackEndAlgorithms
 {

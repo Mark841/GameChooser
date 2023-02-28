@@ -199,11 +199,14 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
         for (std::string store : drive)
         {
             std::vector<std::filesystem::path> subDirectories;
-            for (const auto& entry : std::filesystem::directory_iterator(store))
+            if (!IsStringNullOrWhitespace(store))
             {
-                if (std::filesystem::is_directory(entry))
+                for (const auto& entry : std::filesystem::directory_iterator(store))
                 {
-                    subDirectories.push_back(entry.path());
+                    if (std::filesystem::is_directory(entry))
+                    {
+                        subDirectories.push_back(entry.path());
+                    }
                 }
             }
             // For each game in storeFolder
@@ -418,10 +421,95 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     return directory.substr(index)._Equal("\\" + subdirectory);
 }
 
-//TODO
+//TODO - Alternatively could do check if ASCII is below 91 or whatever lowercase a is and then insert space before
+//TODO - make method for while loops
 std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
 {
-    std::string seperatedString = origString;
+    std::vector<std::string> insertAfterLetter;
+    std::vector<std::string> subsequentLetterCheck;
+
+    // Regex for lowercase followed by uppercase
+    std::regex regex("([a-z])([A-Z])");
+    // Regex for lowercase followed by number
+    std::regex regex1("([a-z])([0-9])");
+    // Regex for number followed by uppercase
+    std::regex regex2("([0-9])([A-Z])");
+    std::string s = origString;
+    std::smatch m;
+
+    while (std::regex_search(s, m, regex)) {
+        int index = 0;
+        for (auto x : m)
+        {
+            if (index != 0)
+            {
+                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
+                {
+                    insertAfterLetter.push_back(m[1]);
+                    subsequentLetterCheck.push_back(m[2]);
+                }
+            }
+            index++;
+        }
+        s = m.suffix().str();
+    }
+    while (std::regex_search(s, m, regex1)) {
+        int index = 0;
+        for (auto x : m)
+        {
+            if (index != 0)
+            {
+                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
+                {
+                    insertAfterLetter.push_back(m[1]);
+                    subsequentLetterCheck.push_back(m[2]);
+                }
+            }
+            index++;
+        }
+        s = m.suffix().str();
+    }
+    while (std::regex_search(s, m, regex2)) {
+        int index = 0;
+        for (auto x : m)
+        {
+            if (index != 0)
+            {
+                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
+                {
+                    insertAfterLetter.push_back(m[1]);
+                    subsequentLetterCheck.push_back(m[2]);
+                }
+            }
+            index++;
+        }
+        s = m.suffix().str();
+    }
+
+    std::string seperatedString = "";
+    int index = 0;
+    for (char letter : origString)
+    {
+        seperatedString += letter;
+        for (unsigned int i=0; i < insertAfterLetter.size(); i++)
+        {
+            std::string insert = insertAfterLetter[i];
+            std::string checker = subsequentLetterCheck[i];
+            std::string test1 = "";
+            test1 += letter;
+            std::string test2 = "";
+
+            if (index == origString.size()) { test2 = ""; }
+            else { test2 += origString[index + 1]; }
+
+            if (insert == test1 && checker == test2)
+            {
+                seperatedString += " ";
+            }
+        }
+        index++;
+    }
+
     return seperatedString;
 }
 //TODO
