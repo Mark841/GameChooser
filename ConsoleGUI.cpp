@@ -18,7 +18,7 @@ void ConsoleGUI::NewStoresInstalledSinceLastRun()
 	if (GetYesOrNoFromUser("SCAN YOUR MACHINE for STORES and GAME FOLDERS again"))
 	{
 		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customEa = GetCustomDirectoryNames(Stores::EA);
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
 		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 
@@ -128,7 +128,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		}
 
 		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customEa = GetCustomDirectoryNames(Stores::EA);
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
 		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 
@@ -142,7 +142,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::cout << "Specify store or game folder locations has been selected" << std::endl;
 
 		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customEa = GetCustomDirectoryNames(Stores::EA);
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
 		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 
@@ -184,7 +184,7 @@ int ConsoleGUI::DisplayFolderIdentifier()
 		std::cout << "Entering new custom search directory names has been selected" << std::endl;
 
 		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
-		std::vector<std::string> customOrigin = GetCustomDirectoryNames(Stores::ORIGIN);
+		std::vector<std::string> customEa = GetCustomDirectoryNames(Stores::EA);
 		std::vector<std::string> customUbisoft = GetCustomDirectoryNames(Stores::UBISOFT);
 		std::vector<std::string> customEpic = GetCustomDirectoryNames(Stores::EPIC);
 

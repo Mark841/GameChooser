@@ -71,8 +71,8 @@ public:
 		case Stores::STEAM:
 			for (std::string data : dataVector)	{ customDirectoryData->steamDirectories.push_back(data); }
 			break;
-		case Stores::ORIGIN:
-			for (std::string data : dataVector) { customDirectoryData->originDirectories.push_back(data); }
+		case Stores::EA:
+			for (std::string data : dataVector) { customDirectoryData->eaDirectories.push_back(data); }
 			break;
 		case Stores::UBISOFT:
 			for (std::string data : dataVector) { customDirectoryData->ubisoftDirectories.push_back(data); }
@@ -85,7 +85,7 @@ public:
 		}
 	}
 
-	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customOrigin = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
+	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customEa = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 private:
 	BackEndAlgorithms() { 
@@ -95,8 +95,8 @@ private:
 	}
 
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex);
-	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundOriginLocationPath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, 
-		int depth = 0, bool foundSteam = false, bool foundOrigin = false, bool foundUbisoft = false, bool foundEpic = false);
+	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundEaDirPath, std::string* foundEaStorePath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, bool* foundSteam, bool* foundEa, bool* foundUbisoft, bool* foundEpic,
+		int depth = 0);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);

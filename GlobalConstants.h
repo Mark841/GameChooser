@@ -8,13 +8,13 @@
 enum class Stores
 {
 	STEAM,
-	ORIGIN,
+	EA,
 	UBISOFT,
 	EPIC
 };
 
-const std::vector<std::string> STORE_NAMES = { "Steam", "Origin", "Ubisoft", "Epic" };
-const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::ORIGIN, Stores::UBISOFT, Stores::EPIC };
+const std::vector<std::string> STORE_NAMES = { "Steam", "EA", "Ubisoft", "Epic" };
+const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::EA, Stores::UBISOFT, Stores::EPIC };
 const std::string LOCAL_DATA_FILE_FILENAME = "GameStores.txt";
 const std::string WHITELIST_FILE_FILENAME = "Whitelists.txt";
 const std::string CUSTOM_DIRECTORY_FILE_FILENAME = "CustomDirectories.txt";
@@ -30,7 +30,7 @@ struct StoresFile
 	std::vector<std::string> driveNames;
 	// Layout of 2d arrays
 	// [C, D, E, F, G] - drives
-	// [[STEAM],[ORIGIN],[UBISOFT],[EPIC],[ROCKSTAR],[BLIZZARD]] - in each drive is each directory for each store
+	// [[STEAM],[EA],[UBISOFT],[EPIC],[ROCKSTAR],[BLIZZARD]] - in each drive is each directory for each store
 	std::vector<std::vector<std::string>> directoryLocationsOnDrive;
 	std::vector<std::vector<std::string>> storeLocationsOnDrive;
 	std::vector<std::vector<bool>> isDirectoryOnDrive;
@@ -46,7 +46,7 @@ struct WhitelistData
 struct CustomDirectoryData
 {
 	std::vector<std::string> steamDirectories = {};
-	std::vector<std::string> originDirectories = {};
+	std::vector<std::string> eaDirectories = {};
 	std::vector<std::string> ubisoftDirectories = {};
 	std::vector<std::string> epicDirectories = {};
 };
@@ -64,7 +64,7 @@ static std::string StoreToString(Stores store)
 	switch (store)
 	{
 	case Stores::STEAM: return "STEAM";
-	case Stores::ORIGIN: return "ORIGIN";
+	case Stores::EA: return "EA";
 	case Stores::UBISOFT: return "UBISOFT";
 	case Stores::EPIC: return "EPIC";
 	default:

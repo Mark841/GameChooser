@@ -129,7 +129,7 @@ void FileManager::WriteCustomDirectoriesToFileOverwrite()
 	CustomDirectoryData* customDirectories = algorithms->GetCustomDirectoryData();
 	std::vector<std::vector<std::string>> allStores{
 	customDirectories->steamDirectories,
-	customDirectories->originDirectories,
+	customDirectories->eaDirectories,
 	customDirectories->ubisoftDirectories,
 	customDirectories->epicDirectories };
 
@@ -236,6 +236,9 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 		std::cout << "ISSUE WITH THE " << CUSTOM_DIRECTORY_FILE_FILENAME << " FILE" << std::endl;
 	}
 
+	file.clear();
+	file.seekg(0, std::ios::beg);
+
 	int numLines = 0;
 	std::string unused;
 	while (std::getline(file, unused))
@@ -253,7 +256,7 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
 		if (i == 0) { customDirectoryData->steamDirectories = ProcessFileLineStringVector(lines[i]); }
-		if (i == 1) { customDirectoryData->originDirectories = ProcessFileLineStringVector(lines[i]); }
+		if (i == 1) { customDirectoryData->eaDirectories = ProcessFileLineStringVector(lines[i]); }
 		if (i == 2) { customDirectoryData->ubisoftDirectories = ProcessFileLineStringVector(lines[i]); }
 		if (i == 3) { customDirectoryData->epicDirectories = ProcessFileLineStringVector(lines[i]); }
 	}
@@ -416,7 +419,7 @@ void FileManager::WriteDefaultDirectoriesToFile(std::fstream* file)
 	file->seekg(0, std::ios::end);
 
 	*file << "Steam" << "\n";
-	*file << "Origin" << "\n";
+	*file << "EA Desktop|EA Games|Origin|Origin Games" << "\n";
 	*file << "Ubisoft" << "\n";
 	*file << "Epic|Epic Games" << "\n";
 }
