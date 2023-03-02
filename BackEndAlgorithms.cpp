@@ -199,7 +199,7 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
         for (std::string store : drive)
         {
             std::vector<std::filesystem::path> subDirectories;
-            if (!IsStringNullOrWhitespace(store))
+            if (!IsStringNullOrWhitespace(store) && std::filesystem::is_directory(store))
             {
                 for (const auto& entry : std::filesystem::directory_iterator(store))
                 {
@@ -406,7 +406,7 @@ bool BackEndAlgorithms::IsSubpathOfAlternateStore(const std::string path, const 
 {
     for (std::string storeName : STORE_NAMES)
     {
-        if (!(currentStoreName == storeName || currentStoreName == storeName + " Games") && (path.find(storeName) != std::string_view::npos))
+        if (!(currentStoreName == storeName || currentStoreName == storeName + " Games" || currentStoreName == storeName + " Desktop") && (path.find(storeName) != std::string_view::npos))
         {
             return true;
         }
@@ -575,7 +575,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         localData->isDirectoryOnDrive[driveIndex][1] = true;
         (*noOfFolders)++;
     }
-    if (std::filesystem::exists(*eaStoreLocation + "\\EA Desktop\\EADesktop.exe") || std::filesystem::exists(*eaStoreLocation + "\\EA Desktop\\EALauncher.exe")) {
+    if (std::filesystem::exists(*eaStoreLocation + "\\EADesktop.exe") || std::filesystem::exists(*eaStoreLocation + "\\EALauncher.exe")) {
         localData->storeLocationsOnDrive[driveIndex][1] = *eaStoreLocation;
         localData->isStoreOnDrive[driveIndex][1] = true;
         (*noOfStores)++;

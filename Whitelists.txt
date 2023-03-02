@@ -5,9 +5,12 @@ DumpStack
 Adobe
 Android
 Apple
+Applications
 ASUS
 Audio
 Common Files
+dotnet
+Job
 lang
 Languages
 MinGW

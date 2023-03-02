@@ -10,11 +10,13 @@ enum class Stores
 	STEAM,
 	EA,
 	UBISOFT,
-	EPIC
+	EPIC,
+	ROCKSTAR,
+	BLIZZARD
 };
 
-const std::vector<std::string> STORE_NAMES = { "Steam", "EA", "Ubisoft", "Epic" };
-const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::EA, Stores::UBISOFT, Stores::EPIC };
+const std::vector<std::string> STORE_NAMES = { "Steam", "EA", "Ubisoft", "Epic", "Rockstar", "Blizzard"};
+const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::EA, Stores::UBISOFT, Stores::EPIC, Stores::ROCKSTAR, Stores::BLIZZARD };
 const std::string LOCAL_DATA_FILE_FILENAME = "GameStores.txt";
 const std::string WHITELIST_FILE_FILENAME = "Whitelists.txt";
 const std::string CUSTOM_DIRECTORY_FILE_FILENAME = "CustomDirectories.txt";
@@ -67,6 +69,8 @@ static std::string StoreToString(Stores store)
 	case Stores::EA: return "EA";
 	case Stores::UBISOFT: return "UBISOFT";
 	case Stores::EPIC: return "EPIC";
+	case Stores::ROCKSTAR: return "ROCKSTAR";
+	case Stores::BLIZZARD: return "BLIZZARD";
 	default:
 		return "NOT VALID STORE";
 	}
