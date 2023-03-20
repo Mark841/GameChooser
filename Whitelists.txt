@@ -8,18 +8,28 @@ Apple
 Applications
 ASUS
 Audio
+BACKUPS
 Common Files
 dotnet
+Fly Drive BACKUP (28.06.2018)
 Job
 lang
 Languages
+Mark
+Memory Sticks
 MinGW
 Microsoft
 Music
 Phone
 Photos
+Photos & Videos
 ProgramData
+Programming
+PS Vita
+PureBDcraft 512x MC112
+Raspberry Pi
 RivaTuner
+runtime
 steamapps
 temp
 Users
@@ -27,3 +37,5 @@ Videos
 Windows
 WinREAgent
 $Recycle.Bin
+$RECYCLE.BIN
+156

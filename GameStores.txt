@@ -5,7 +5,7 @@ C:\Program Files (x86)\Steam\steamapps\common|C:\Program Files\EA Games|C:\Progr
 D:\Steam\steamapps\common|D:\Program Files (x86)\Origin Games|D:\Ubisoft|D:\Epic
 F:\Steam\steamapps\common||F:\Ubisoft|
 G:\Steam\steamapps\common||G:\Ubisoft|G:\Epic
-|||H:\Epic
+H:\SteamLibrary\steamapps\common|H:\Origin||H:\Epic
 C:\Program Files (x86)\Steam|C:\Program Files\Electronic Arts\EA Desktop\EA Desktop|C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher|C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64
 |||
 |||
@@ -15,12 +15,12 @@ C:\Program Files (x86)\Steam|C:\Program Files\Electronic Arts\EA Desktop\EA Desk
 1|1|1|1
 1|0|1|0
 1|0|1|1
-0|0|0|1
+1|1|0|1
 1|1|1|1
 0|0|0|0
 0|0|0|0
 0|0|0|0
 0|0|0|0
-4|4|2|3|1
+4|4|2|3|3
 4|0|0|0|0
 null

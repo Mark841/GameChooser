@@ -53,6 +53,7 @@ void BackEndAlgorithms::ScanDrive(char driveName)
         drivesIndex++;
     }
 }
+//TODO - make threaded for each drive to speed up searching
 void BackEndAlgorithms::ScanAllDrives()
 {
     std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
@@ -213,15 +214,18 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
             for (std::filesystem::path sf : subDirectories)
             {
                 std::string gameDirectory = sf.string();
-                // If its trying to search something that isn't a directory AND if that directory has an exe in it - THEN assume its a game dir
-                if (std::filesystem::is_directory(gameDirectory) && DoesDirectoryContainExe(sf)
-                    && !IsSubpath(gameDirectory, "Ubisoft Game Launcher")
+                std::string* currentSearchDirectoryPath = new std::string(gameDirectory);
+                std::string* foundLocationPath = new std::string("");
+
+                // If its trying to search something that is a directory AND if that directory has an exe in it somewhere - THEN assume its a game dir
+                if (std::filesystem::is_directory(gameDirectory) && RecurseSearchForExe(currentSearchDirectoryPath, foundLocationPath)
+                    && !IsSubpath(gameDirectory, "Launcher")
                     && !IsSubpath(gameDirectory, "Epic Online Services"))
                 {
                     GameData gameData;
                     gameData.gameName = SplitStringAtUpperCase(sf.filename().string());
-                    gameData.gameDirectory = gameDirectory;
-                    gameData.gameExe = GetExeInDirectory(sf);
+                    gameData.gameDirectory = *foundLocationPath;
+                    gameData.gameExe = GetExeInDirectory(*foundLocationPath);
                     gameData.store = STORE_ENUMS[storeIndex];
                     gameData.drive = driveName[0]; // Use index 0 as want the first character which is drive letter
                     allGames.push_back(gameData);
@@ -233,28 +237,40 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
         driveIndex++;
     }
 }
-//TODO
-std::vector<std::string> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
+std::vector<GameData> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 {
-    std::vector<std::string> games;
-    for (std::vector<std::string> drive : localFileData->directoryLocationsOnDrive)
+    std::vector<GameData> sortedGames = allGames;
+    GameData tempData;
+    for (int i = 0; i < sortedGames.size(); i++)
     {
-        for (std::string folder : drive)
+        for (int j = i + 1; j < sortedGames.size(); j++)
         {
-
+            if (!descending && sortedGames[i].gameName > sortedGames[j].gameName)
+            {
+                tempData = sortedGames[i];
+                sortedGames[i] = sortedGames[j];
+                sortedGames[j] = tempData;
+            }
+            if (descending && sortedGames[i].gameName < sortedGames[j].gameName)
+            {
+                tempData = sortedGames[i];
+                sortedGames[i] = sortedGames[j];
+                sortedGames[j] = tempData;
+            }
         }
     }
-    return games;
+
+    return sortedGames;
 }
 //TODO
-std::vector<std::vector<std::string>> BackEndAlgorithms::GetGamesByDrive()
+std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByDrive()
 {
-    return std::vector<std::vector<std::string>>();
+    return std::vector<std::vector<GameData>>();
 }
 //TODO
-std::vector<std::vector<std::string>> BackEndAlgorithms::GetGamesByStore()
+std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
 {
-    return std::vector<std::vector<std::string>>();
+    return std::vector<std::vector<GameData>>();
 }
 
 void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customEa, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
@@ -312,7 +328,7 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::string* currentSearchDire
         }
         for (std::string eaName : customDirectoryData->eaDirectories)
         {
-            if (IsSubpath(*currentSearchDirectoryPath, "Games") && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, eaName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, eaName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
+            if (!IsSubpath(*currentSearchDirectoryPath, "Desktop") && std::filesystem::is_directory(folder) && IsSubDirectoryName(*currentSearchDirectoryPath, eaName) && !IsSubpathOfAlternateStore(*currentSearchDirectoryPath, eaName)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
             {
                 *foundEaDirPath = std::string(folder.string());
                 *foundEA = true;
@@ -380,6 +396,54 @@ bool BackEndAlgorithms::SearchForStoresAndFolders(std::string* currentSearchDire
     return false;
 }
 
+bool BackEndAlgorithms::RecurseSearchForExe(std::string* currentSearchDirectoryPath, std::string* foundLocationPath, int depth)
+{// If its trying to search something that isn't a directory OR if it is over the maximum directory search depth
+    if (!std::filesystem::is_directory(*currentSearchDirectoryPath) || depth > MAX_GAME_DIRECTORY_DEPTH)
+    {
+        return false;
+    }
+
+    // Creates a list to hold all sub folders
+    std::vector<std::filesystem::path> subFolders;
+    std::filesystem::path folder = std::filesystem::path(*currentSearchDirectoryPath);
+
+    try
+    {
+        if (std::filesystem::is_directory(folder) && DoesDirectoryContainExe(folder)) // Need to check if the directory name CONTAINS store and not is directly equal to because it will have the extension at the end
+        {
+            *foundLocationPath = std::string(folder.string());
+            return true;
+        }
+
+        for (const auto& entry : std::filesystem::directory_iterator(*currentSearchDirectoryPath))
+        {
+            if (std::filesystem::is_directory(entry))
+            {
+                subFolders.push_back(entry.path());
+            }
+        }
+    }
+
+    catch (std::filesystem::filesystem_error ex)
+    {
+        return false;
+    }
+
+    // for each sub folder call the function again
+    for (std::filesystem::path sf : subFolders)
+    {
+        if ((std::filesystem::status(sf).permissions() | std::filesystem::perms::others_read) == std::filesystem::status(sf).permissions())
+        {
+            std::string subFolder = sf.string();
+            if (RecurseSearchForExe(&subFolder, foundLocationPath, depth + 1))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool BackEndAlgorithms::IsPathWhitelisted(const std::string path)
 {
     for (std::string whitelist : whitelistsData->directoryNames)
@@ -406,7 +470,7 @@ bool BackEndAlgorithms::IsSubpathOfAlternateStore(const std::string path, const 
 {
     for (std::string storeName : STORE_NAMES)
     {
-        if (!(currentStoreName == storeName || currentStoreName == storeName + " Games" || currentStoreName == storeName + " Desktop") && (path.find(storeName) != std::string_view::npos))
+        if (!(IsStoreACustomDir(currentStoreName, storeName)) && (path.find(storeName) != std::string_view::npos))
         {
             return true;
         }
@@ -425,7 +489,22 @@ bool BackEndAlgorithms::IsSubDirectoryName(const std::string directory, const st
     return directory.substr(index)._Equal("\\" + subdirectory);
 }
 
-//TODO - Alternatively could do check if ASCII is below 91 or whatever lowercase a is and then insert space before
+bool BackEndAlgorithms::IsStoreACustomDir(const std::string dirName, const std::string storeName)
+{
+    if (dirName == storeName
+        || dirName == storeName + " Games"
+        || dirName == storeName + " Desktop"
+        || dirName == storeName + " Library"
+        || dirName == storeName + "Games"
+        || dirName == storeName + "Desktop"
+        || dirName == storeName + "Library")
+    {
+        return true;
+    }
+    return false;
+}
+
+//TODO - Alternatively could do check if ASCII is below 91 or whatever lowercase 'a' is and then insert space before
 //TODO - make method for while loops
 std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
 {

@@ -241,25 +241,25 @@ int ConsoleGUI::DisplayAllGames()
 	{
 		std::cout << "View games alphabetically has been selected" << std::endl;
 		bool orderByDescending = GetYesOrNoFromUser("order the games in DESCENDING ALPHABETICAL ORDER");
-		std::vector<std::string> gamesByAlphabet = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(orderByDescending);
-		for (std::string game : gamesByAlphabet)
+		std::vector<GameData> gamesByAlphabet = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(orderByDescending);
+		for (GameData game : gamesByAlphabet)
 		{
-			std::cout << game << std::endl;
+			std::cout << game.gameName << std::endl;
 		}
 		break;
 	}
 	case 2:
 	{
 		std::cout << "View games by drive has been selected" << std::endl;
-		std::vector<std::vector<std::string>> gamesByDrive = manager->GetAlgorithmsHandler()->GetGamesByDrive();
+		std::vector<std::vector<GameData>> gamesByDrive = manager->GetAlgorithmsHandler()->GetGamesByDrive();
 		std::vector<char> driveNames = manager->GetAlgorithmsHandler()->GetDriveNames();
 		int index = 0;
-		for (std::vector<std::string> drive : gamesByDrive)
+		for (std::vector<GameData> drive : gamesByDrive)
 		{
 			std::cout << "Games on drive " << driveNames[index] << ":" << std::endl;
-			for (std::string game : drive)
+			for (GameData game : drive)
 			{
-				std::cout << "\t" << game << std::endl;
+				std::cout << "\t" << game.gameName << std::endl;
 			}
 			index++;
 		}
@@ -268,15 +268,15 @@ int ConsoleGUI::DisplayAllGames()
 	case 3:
 	{
 		std::cout << "View games by store has been selected" << std::endl;
-		std::vector<std::vector<std::string>> gamesByStore = manager->GetAlgorithmsHandler()->GetGamesByStore();
+		std::vector<std::vector<GameData>> gamesByStore = manager->GetAlgorithmsHandler()->GetGamesByStore();
 		std::vector<std::string> storeNames = STORE_NAMES;
 		int index = 0;
-		for (std::vector<std::string> drive : gamesByStore)
+		for (std::vector<GameData> drive : gamesByStore)
 		{
 			std::cout << "Games on store " << storeNames[index] << ":" << std::endl;
-			for (std::string game : drive)
+			for (GameData game : drive)
 			{
-				std::cout << "\t" << game << std::endl;
+				std::cout << "\t" << game.gameName << std::endl;
 			}
 			index++;
 		}

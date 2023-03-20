@@ -1,4 +1,4 @@
-Steam
+Steam|SteamLibrary
 EA Desktop|EA Games|Origin|Origin Games
 Ubisoft
 Epic|Epic Games

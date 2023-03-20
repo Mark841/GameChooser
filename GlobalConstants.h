@@ -23,6 +23,7 @@ const std::string CUSTOM_DIRECTORY_FILE_FILENAME = "CustomDirectories.txt";
 const std::string STEAMAPPS_COMMON = "\\steamapps\\common";
 constexpr int NUMBER_OF_STORES = 4;
 constexpr int MAX_DIRECTORY_DEPTH = 6;
+constexpr int MAX_GAME_DIRECTORY_DEPTH = 10;
 
 struct StoresFile
 {

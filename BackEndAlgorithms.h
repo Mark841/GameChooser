@@ -39,9 +39,9 @@ public:
 	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
 
 	void GetAllGamesFromFolders();
-	std::vector<std::string> GetGamesAlphabetically(bool descending);
-	std::vector<std::vector<std::string>> GetGamesByDrive();
-	std::vector<std::vector<std::string>> GetGamesByStore();
+	std::vector<GameData> GetGamesAlphabetically(bool descending);
+	std::vector<std::vector<GameData>> GetGamesByDrive();
+	std::vector<std::vector<GameData>> GetGamesByStore();
 
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
@@ -97,12 +97,14 @@ private:
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex);
 	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundEaDirPath, std::string* foundEaStorePath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, bool* foundSteam, bool* foundEa, bool* foundUbisoft, bool* foundEpic,
 		int depth = 0);
+	bool RecurseSearchForExe(std::string* currentSearchDirectoryPath, std::string* foundLocationPath, int depth = 0);
 
 	bool IsPathWhitelisted(const std::string path);
 	bool IsSubpath(const std::filesystem::path& path, const std::filesystem::path& base);
 	bool IsSubpath(const std::string path, const std::string subpath);
 	bool IsSubpathOfAlternateStore(const std::string path, const std::string currentStoreName);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
+	bool IsStoreACustomDir(const std::string dirName, const std::string storeName);
 
 	std::string SplitStringAtUpperCase(std::string origString);
 	bool DoesDirectoryContainExe(std::filesystem::path dir);
