@@ -194,6 +194,10 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
 {
     int driveIndex = 0;
     int storeIndex = 0;
+    allGames.clear();
+    allGamesByDrive.clear();
+    allGamesByDrive.resize(localFileData->amountOfDrives);
+
     for (std::vector<std::string> drive : localFileData->directoryLocationsOnDrive)
     {
         std::string driveName = localFileData->driveNames[driveIndex];
@@ -219,8 +223,7 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
 
                 // If its trying to search something that is a directory AND if that directory has an exe in it somewhere - THEN assume its a game dir
                 if (std::filesystem::is_directory(gameDirectory) && RecurseSearchForExe(currentSearchDirectoryPath, foundLocationPath)
-                    && !IsSubpath(gameDirectory, "Launcher")
-                    && !IsSubpath(gameDirectory, "Epic Online Services"))
+                    && !IsGameDirWhitelisted(gameDirectory))
                 {
                     GameData gameData;
                     gameData.gameName = SplitStringAtUpperCase(sf.filename().string());
@@ -229,6 +232,7 @@ void BackEndAlgorithms::GetAllGamesFromFolders()
                     gameData.store = STORE_ENUMS[storeIndex];
                     gameData.drive = driveName[0]; // Use index 0 as want the first character which is drive letter
                     allGames.push_back(gameData);
+                    allGamesByDrive[driveIndex].push_back(gameData);
                 }
             }
             storeIndex++;
@@ -241,9 +245,9 @@ std::vector<GameData> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 {
     std::vector<GameData> sortedGames = allGames;
     GameData tempData;
-    for (int i = 0; i < sortedGames.size(); i++)
+    for (unsigned int i = 0; i < sortedGames.size(); i++)
     {
-        for (int j = i + 1; j < sortedGames.size(); j++)
+        for (unsigned int j = i + 1; j < sortedGames.size(); j++)
         {
             if (!descending && sortedGames[i].gameName > sortedGames[j].gameName)
             {
@@ -262,15 +266,43 @@ std::vector<GameData> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 
     return sortedGames;
 }
-//TODO
 std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByDrive()
 {
-    return std::vector<std::vector<GameData>>();
+    return allGamesByDrive;
 }
-//TODO
 std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
 {
-    return std::vector<std::vector<GameData>>();
+    std::vector<std::vector<GameData>> sortedGames;
+    sortedGames.resize(NUMBER_OF_STORES);
+
+    for (GameData game : allGames)
+    {
+        if (game.store == Stores::STEAM) 
+        {
+            sortedGames[0].push_back(game);
+        }
+        else if (game.store == Stores::EA)
+        {
+            sortedGames[1].push_back(game);
+        }
+        else if (game.store == Stores::UBISOFT)
+        {
+            sortedGames[2].push_back(game);
+        }
+        else if (game.store == Stores::EPIC)
+        {
+            sortedGames[3].push_back(game);
+        }
+        /*else if (game.store == Stores::ROCKSTAR)
+        {
+            sortedGames[4].push_back(game);
+        }
+        else if (game.store == Stores::BLIZZARD)
+        {
+            sortedGames[5].push_back(game);
+        }*/
+    }
+    return sortedGames;
 }
 
 void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customEa, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
@@ -502,6 +534,14 @@ bool BackEndAlgorithms::IsStoreACustomDir(const std::string dirName, const std::
         return true;
     }
     return false;
+}
+
+bool BackEndAlgorithms::IsGameDirWhitelisted(const std::string dirName)
+{
+    return (IsSubpath(dirName, "Launcher")
+        || IsSubpath(dirName, "Epic Online Services")
+        || IsSubpath(dirName, "Steamworks Shared")
+        || IsSubpath(dirName, "SteamVR"));
 }
 
 //TODO - Alternatively could do check if ASCII is below 91 or whatever lowercase 'a' is and then insert space before

@@ -88,8 +88,9 @@ public:
 	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customEa = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
 
 private:
-	BackEndAlgorithms() { 
-		localFileData = new StoresFile(); 
+	BackEndAlgorithms() 
+	{
+		localFileData = new StoresFile();
 		whitelistsData = new WhitelistData();
 		customDirectoryData = new CustomDirectoryData();
 	}
@@ -105,6 +106,7 @@ private:
 	bool IsSubpathOfAlternateStore(const std::string path, const std::string currentStoreName);
 	bool IsSubDirectoryName(const std::string directory, const std::string subdirectory);
 	bool IsStoreACustomDir(const std::string dirName, const std::string storeName);
+	bool IsGameDirWhitelisted(const std::string dirName);
 
 	std::string SplitStringAtUpperCase(std::string origString);
 	bool DoesDirectoryContainExe(std::filesystem::path dir);
@@ -118,6 +120,7 @@ private:
 	WhitelistData* whitelistsData;
 	CustomDirectoryData* customDirectoryData;
 	std::vector<GameData> allGames;
+	std::vector<std::vector<GameData>> allGamesByDrive;
 };
 
 #endif BACKEND_ALGORITHMS_HPP

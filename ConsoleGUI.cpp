@@ -15,6 +15,7 @@ void ConsoleGUI::NewStoresInstalledSinceLastRun()
 	std::cout << "Or have new folders been made for where games are stored on existing drives?" << std::endl;
 	std::cout << "\nIf any of these are true please enter 'y' or 'yes'" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
+
 	if (GetYesOrNoFromUser("SCAN YOUR MACHINE for STORES and GAME FOLDERS again"))
 	{
 		std::vector<std::string> customSteam = GetCustomDirectoryNames(Stores::STEAM);
@@ -158,6 +159,7 @@ int ConsoleGUI::DisplayScanByDrive()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+	return -5;
 }
 //TOTEST
 int ConsoleGUI::DisplayFolderIdentifier()
@@ -208,6 +210,7 @@ int ConsoleGUI::DisplayFolderIdentifier()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+	return -5;
 }
 
 //TODO - Give a random installed game to play
@@ -240,8 +243,8 @@ int ConsoleGUI::DisplayAllGames()
 	case 1:
 	{
 		std::cout << "View games alphabetically has been selected" << std::endl;
-		bool orderByDescending = GetYesOrNoFromUser("order the games in DESCENDING ALPHABETICAL ORDER");
-		std::vector<GameData> gamesByAlphabet = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(orderByDescending);
+		std::vector<GameData> gamesByAlphabet = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(GetYesOrNoFromUser("order the games in DESCENDING ALPHABETICAL ORDER"));
+
 		for (GameData game : gamesByAlphabet)
 		{
 			std::cout << game.gameName << std::endl;
@@ -256,7 +259,11 @@ int ConsoleGUI::DisplayAllGames()
 		int index = 0;
 		for (std::vector<GameData> drive : gamesByDrive)
 		{
-			std::cout << "Games on drive " << driveNames[index] << ":" << std::endl;
+			if (drive.size() != 0) 
+			{ 
+				std::cout << "\nGames on drive - " << driveNames[index] << ":" << std::endl; 
+			}
+
 			for (GameData game : drive)
 			{
 				std::cout << "\t" << game.gameName << std::endl;
@@ -269,11 +276,15 @@ int ConsoleGUI::DisplayAllGames()
 	{
 		std::cout << "View games by store has been selected" << std::endl;
 		std::vector<std::vector<GameData>> gamesByStore = manager->GetAlgorithmsHandler()->GetGamesByStore();
-		std::vector<std::string> storeNames = STORE_NAMES;
+		std::vector<std::string> storeNames = STORE_NAMES_UPPER;
 		int index = 0;
 		for (std::vector<GameData> drive : gamesByStore)
 		{
-			std::cout << "Games on store " << storeNames[index] << ":" << std::endl;
+			if (drive.size() != 0)
+			{
+				std::cout << "\nGames on store - " << storeNames[index] << ":" << std::endl;
+			}
+
 			for (GameData game : drive)
 			{
 				std::cout << "\t" << game.gameName << std::endl;
@@ -289,6 +300,7 @@ int ConsoleGUI::DisplayAllGames()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+	return -5;
 }
 
 //TODO - Open stores
@@ -324,6 +336,7 @@ int ConsoleGUI::DisplayStores()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+	return -5;
 }
 
 //TODO - Search for game on stores
@@ -359,6 +372,7 @@ int ConsoleGUI::DisplayStoresWithSearch()
 		std::cout << "EXITING SYSTEM" << std::endl;
 		return -1;
 	}
+	return -5;
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
@@ -411,11 +425,14 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 	manager->GetAlgorithmsHandler()->AddToCustomDirectoryData(store, custom);
 	return custom;
 }
+
+//TODO - doesnt work for filter alphabetically
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
 {
 	std::string answer;
 	std::cout << "Would you like to " << aboutValue << ", if you would please type 'y' or 'yes' and then press ENTER: " << std::endl;
 	std::getline(std::cin, answer);
+
 	if (answer == "y" || answer == "yes")
 	{
 		return true;
