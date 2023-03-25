@@ -15,7 +15,7 @@ public:
 		if (!algorithms->GetLocalData()->exists)
 		{
 			algorithms->InitLocalDataSizes();
-			algorithms->FindStoresOnAllDrives();
+			algorithms->ScanAllDrivesInitial();
 			fileHandler->WriteLocalDataToFileOverwrite();
 		}
 		algorithms->GetAllGamesFromFolders();

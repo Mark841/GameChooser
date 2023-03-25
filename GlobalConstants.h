@@ -5,7 +5,7 @@
 #include "StorageStructures.h"
 
 const std::vector<std::string> STORE_NAMES = { "Steam", "EA", "Ubisoft", "Epic", "Rockstar", "Blizzard"};
-const std::vector<std::string> STORE_NAMES_UPPER = { "STEAM", "ORIGIN", "UBISOFT", "EPIC", "ROCKSTAR", "BLIZZARD"};
+const std::vector<std::string> STORE_NAMES_UPPER = { "STEAM", "EA", "UBISOFT", "EPIC", "ROCKSTAR", "BLIZZARD"};
 const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::EA, Stores::UBISOFT, Stores::EPIC, Stores::ROCKSTAR, Stores::BLIZZARD };
 const std::string LOCAL_DATA_FILE_FILENAME = "GameStores.txt";
 const std::string WHITELIST_FILE_FILENAME = "Whitelists.txt";

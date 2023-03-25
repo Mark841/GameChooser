@@ -46,24 +46,106 @@ void BackEndAlgorithms::ScanDrive(char driveName)
     int drivesIndex = 0;
     for (char drive : allDrives)
     {
-        if (localData->driveNames[drivesIndex].find(drive) != std::string_view::npos)
+        if (localData->driveNames[drivesIndex].find(driveName) != std::string_view::npos)
         {
             FindStoresOnDrive(localData, drivesIndex);
         }
         drivesIndex++;
     }
 }
-//TODO - make threaded for each drive to speed up searching
+void BackEndAlgorithms::ScanDrive(const int driveIndex)
+{
+    StoresFile* localData = GetLocalData();
+    FindStoresOnDrive(localData, driveIndex);
+}
+//TODO - fix threading in loop so will work on anyones machine
 void BackEndAlgorithms::ScanAllDrives()
 {
-    std::vector<char> allDrives = BackEndAlgorithms::GetDriveNames();
+    std::vector<char> allDrives = GetDriveNames();
     int driveIndex = 0;
+
+    std::vector<std::thread> threadVector;
+    
+    //for (char drive : allDrives)
+    //{
+    //    // Add threads to vector of threads to keep track of them
+    //    threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+    //}
+
+    threadVector.emplace_back([&]() {ThreadScanDrive('C'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('D'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('F'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('G'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('H'); }); // Pass by reference here, make sure the object lifetime is correct
+
+    // Re-join threads to main thread
+    for (auto& thread : threadVector)
+    {
+        thread.join();
+    }
+
+    localFileData->exists = true;
+}
+//TODO - fix threading in loop so will work on anyones machine
+void BackEndAlgorithms::ScanAllDrivesInitial()
+{
+    std::vector<char> allDrives = GetDriveNames();
+    int driveIndex = 0;
+
+    std::vector<std::thread> threadVector;
+    
+    for (unsigned int drivesIndex = 0; drivesIndex < allDrives.size(); drivesIndex++)
+    {
+        localFileData->driveNames[drivesIndex] = allDrives[drivesIndex];
+    }
+    
+    //for (char drive : allDrives)
+    //{
+    //    // Add threads to vector of threads to keep track of them
+    //    threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+    //}
+
+    threadVector.emplace_back([&]() {ThreadScanDrive('C'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('D'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('F'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('G'); }); // Pass by reference here, make sure the object lifetime is correct
+    threadVector.emplace_back([&]() {ThreadScanDrive('H'); }); // Pass by reference here, make sure the object lifetime is correct
+
+    // Re-join threads to main thread
+    for (auto& thread : threadVector)
+    {
+        thread.join();
+    }
+
+    localFileData->exists = true;
+}
+
+void BackEndAlgorithms::ScanAllDrivesNonThreaded()
+{
+
+    std::vector<char> allDrives = GetDriveNames();
+    int driveIndex = 0;
+
     for (char drive : allDrives)
     {
-        driveIndex++;
-        std::cout << "Scanning drive: " << driveIndex << std::endl;
+        std::cout << "Scanning drive: " << drive << std::endl;
         ScanDrive(drive);
-        std::cout << "Scanned drive: " << driveIndex << "\n\tDrives percentage complete: " << (driveIndex * 100) / localFileData->amountOfDrives << std::endl;
+        std::cout << "Scanned drive: " << drive << std::endl;
+    }
+
+    localFileData->exists = true;
+}
+void BackEndAlgorithms::ScanAllDrivesInitialNonThreaded()
+{
+    std::vector<char> allDrives = GetDriveNames();
+    int driveIndex = 0;
+
+    for (unsigned int drivesIndex = 0; drivesIndex < allDrives.size(); drivesIndex++)
+    {
+        localFileData->driveNames[drivesIndex] = allDrives[drivesIndex];
+        std::cout << "Scanning drive: " << allDrives[drivesIndex] << std::endl;
+        ScanDrive(allDrives[drivesIndex]);
+        std::cout << "Scanned drive: " << allDrives[drivesIndex] << std::endl;
     }
 
     localFileData->exists = true;
@@ -305,22 +387,14 @@ std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
     return sortedGames;
 }
 
-void BackEndAlgorithms::FindStoresOnAllDrives(const std::vector<std::string> customSteam, const std::vector<std::string> customEa, const std::vector<std::string> customUbisoft, const std::vector<std::string> customEpic)
-{
-    std::vector<char> drives = GetDriveNames();
-
-    for (unsigned int drivesIndex = 0; drivesIndex < drives.size(); drivesIndex++)
-    {
-        std::cout << "Scanning drive: " << drivesIndex << std::endl;
-        localFileData->driveNames[drivesIndex] = drives[drivesIndex];
-        FindStoresOnDrive(localFileData, drivesIndex);
-        std::cout << "Scanned drive: " << drivesIndex + 1 << "\n\tDrives percentage complete: " << ((drivesIndex + 1) * 100) / localFileData->amountOfDrives << std::endl;
-    }
-
-    localFileData->exists = true;
-}
-
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
+
+void BackEndAlgorithms::ThreadScanDrive(const char drive)
+{
+    std::cout << "Scanning drive: " << drive << std::endl;
+    ScanDrive(drive);
+    std::cout << "Scanned drive: " << drive << std::endl;
+}
 
 void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex)
 {
@@ -334,7 +408,7 @@ void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int drive
     localData->numberOfStoresOnDrive[driveIndex] = *noOfStores;
     localData->numberOfDirectoriesOnDrive[driveIndex] = *noOfFolders;
 }
-//TODO - Fix up EA to work for game folder and store directory
+
 bool BackEndAlgorithms::SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundEaDirPath, std::string* foundEaStorePath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath,
     bool* foundSteam, bool* foundEA, bool* foundUbisoft, bool* foundEpic, int depth)
 {

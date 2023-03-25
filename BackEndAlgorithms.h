@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <thread>
 
 class BackEndAlgorithms
 {
@@ -20,7 +21,11 @@ public:
 	void InitLocalDataSizes();
 
 	void ScanDrive(const char driveName);
+	void ScanDrive(const int driveIndex);
 	void ScanAllDrives();
+	void ScanAllDrivesInitial();
+	void ScanAllDrivesNonThreaded();
+	void ScanAllDrivesInitialNonThreaded();
 
 	bool IsStringNullOrWhitespace(std::string string);
 
@@ -85,8 +90,6 @@ public:
 		}
 	}
 
-	void FindStoresOnAllDrives(const std::vector<std::string> customSteam = {}, const std::vector<std::string> customEa = {}, const std::vector<std::string> customUbisoft = {}, const std::vector<std::string> customEpic = {});
-
 private:
 	BackEndAlgorithms() 
 	{
@@ -94,6 +97,8 @@ private:
 		whitelistsData = new WhitelistData();
 		customDirectoryData = new CustomDirectoryData();
 	}
+
+	void ThreadScanDrive(const char drive);
 
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex);
 	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundEaDirPath, std::string* foundEaStorePath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, bool* foundSteam, bool* foundEa, bool* foundUbisoft, bool* foundEpic,
