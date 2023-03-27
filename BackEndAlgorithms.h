@@ -11,9 +11,11 @@
 #include <vector>
 #include <regex>
 #include <thread>
+#include <ppl.h>
 
 class BackEndAlgorithms
 {
+
 public:
 	BackEndAlgorithms(const BackEndAlgorithms& obj);
 	static BackEndAlgorithms* GetInstance();
@@ -98,7 +100,7 @@ private:
 		customDirectoryData = new CustomDirectoryData();
 	}
 
-	void ThreadScanDrive(const char drive);
+	inline void ThreadScanDrive(const char drive);
 
 	void FindStoresOnDrive(StoresFile* localData, const int driveIndex);
 	bool SearchForStoresAndFolders(std::string* currentSearchDirectoryPath, std::string* foundSteamLocationPath, std::string* foundEaDirPath, std::string* foundEaStorePath, std::string* foundUbisoftLocationPath, std::string* foundEpicLocationPath, bool* foundSteam, bool* foundEa, bool* foundUbisoft, bool* foundEpic,

@@ -58,7 +58,6 @@ void BackEndAlgorithms::ScanDrive(const int driveIndex)
     StoresFile* localData = GetLocalData();
     FindStoresOnDrive(localData, driveIndex);
 }
-//TODO - fix threading in loop so will work on anyones machine
 void BackEndAlgorithms::ScanAllDrives()
 {
     std::vector<char> allDrives = GetDriveNames();
@@ -66,17 +65,11 @@ void BackEndAlgorithms::ScanAllDrives()
 
     std::vector<std::thread> threadVector;
     
-    //for (char drive : allDrives)
-    //{
-    //    // Add threads to vector of threads to keep track of them
-    //    threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
-    //}
-
-    threadVector.emplace_back([&]() {ThreadScanDrive('C'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('D'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('F'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('G'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('H'); }); // Pass by reference here, make sure the object lifetime is correct
+    for (char &drive : allDrives)
+    {
+        // Add threads to vector of threads to keep track of them
+        threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+    }
 
     // Re-join threads to main thread
     for (auto& thread : threadVector)
@@ -86,7 +79,6 @@ void BackEndAlgorithms::ScanAllDrives()
 
     localFileData->exists = true;
 }
-//TODO - fix threading in loop so will work on anyones machine
 void BackEndAlgorithms::ScanAllDrivesInitial()
 {
     std::vector<char> allDrives = GetDriveNames();
@@ -99,17 +91,11 @@ void BackEndAlgorithms::ScanAllDrivesInitial()
         localFileData->driveNames[drivesIndex] = allDrives[drivesIndex];
     }
     
-    //for (char drive : allDrives)
-    //{
-    //    // Add threads to vector of threads to keep track of them
-    //    threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
-    //}
-
-    threadVector.emplace_back([&]() {ThreadScanDrive('C'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('D'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('F'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('G'); }); // Pass by reference here, make sure the object lifetime is correct
-    threadVector.emplace_back([&]() {ThreadScanDrive('H'); }); // Pass by reference here, make sure the object lifetime is correct
+    for (char &drive : allDrives)
+    {
+        // Add threads to vector of threads to keep track of them
+        threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+    }
 
     // Re-join threads to main thread
     for (auto& thread : threadVector)
@@ -391,9 +377,7 @@ std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
 
 void BackEndAlgorithms::ThreadScanDrive(const char drive)
 {
-    std::cout << "Scanning drive: " << drive << std::endl;
     ScanDrive(drive);
-    std::cout << "Scanned drive: " << drive << std::endl;
 }
 
 void BackEndAlgorithms::FindStoresOnDrive(StoresFile* localData, const int driveIndex)
