@@ -26,8 +26,6 @@ public:
 	void ScanDrive(const int driveIndex);
 	void ScanAllDrives();
 	void ScanAllDrivesInitial();
-	void ScanAllDrivesNonThreaded();
-	void ScanAllDrivesInitialNonThreaded();
 
 	bool IsStringNullOrWhitespace(std::string string);
 
@@ -40,12 +38,11 @@ public:
 	std::string GetNoOfFoldersOnDriveString();
 	std::string GetNoOfStoresOnDriveString();
 
-	std::string GetStringFromIntArray(const std::vector<int> intArray);
-	std::string GetStringFromStringArray(const std::vector<std::string> stringArray);
-	std::vector<std::string> GetStringsFrom2DStringArray(const std::vector<std::vector<std::string>> stringArray);
-	std::vector<std::string> GetStringsFrom2DBoolArray(const std::vector<std::vector<bool>> boolArray);
+	template <typename T> std::string GetStringFromVector(const std::vector<T> vector);
+	template <typename T> std::vector<std::string> GetStringsFrom2DVector(const std::vector<std::vector<T>> vector);
 
 	void GetAllGamesFromFolders();
+	void GetAllGamesFromDrive(const std::vector<std::string> directoryLocationsOnDrive, const int driveIndex);
 	std::vector<GameData> GetGamesAlphabetically(bool descending);
 	std::vector<std::vector<GameData>> GetGamesByDrive();
 	std::vector<std::vector<GameData>> GetGamesByStore();
@@ -69,7 +66,8 @@ public:
 	inline StoresFile* GetLocalData() { return localFileData; }
 	inline WhitelistData* GetWhitelistData() { return whitelistsData; }
 	inline CustomDirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
-	inline void AddToWhitelistData(std::vector<std::string> dataVector) {
+	inline void AddToWhitelistData(std::vector<std::string> dataVector) 
+	{
 		for (std::string data : dataVector) { whitelistsData->directoryNames.push_back(data); }
 	}
 	inline void AddToCustomDirectoryData(Stores store, std::vector<std::string> dataVector) {
@@ -116,11 +114,14 @@ private:
 	bool IsGameDirWhitelisted(const std::string dirName);
 
 	std::string SplitStringAtUpperCase(std::string origString);
+	void RegexChecker(std::regex regex, std::string origString, std::smatch match, std::vector<std::string>& insertAfterLetter, std::vector<std::string>& subsequentLetterCheck);
 	bool DoesDirectoryContainExe(std::filesystem::path dir);
 	std::string GetExeInDirectory(std::filesystem::path dir);
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
 
+	template <typename T> std::string ToString(const T& t) { return std::to_string(t); }
+	std::string ToString(const std::string& t) { return t; }
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;

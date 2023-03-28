@@ -329,7 +329,7 @@ void FileManager::WriteToFile(std::fstream* file, std::vector<std::string> lines
 }
 void FileManager::WriteToFile(std::fstream* file, std::vector<std::vector<std::string>> lines)
 {
-	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DStringArray(lines);
+	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DVector(lines);
 	WriteToFile(file, toWrite);
 }
 void FileManager::WriteToFile(std::ofstream* file, std::vector<std::string> lines)
@@ -342,7 +342,7 @@ void FileManager::WriteToFile(std::ofstream* file, std::vector<std::string> line
 }
 void FileManager::WriteToFile(std::ofstream* file, std::vector<std::vector<std::string>> lines)
 {
-	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DStringArray(lines);
+	std::vector<std::string> toWrite = BackEndAlgorithms::GetInstance()->GetStringsFrom2DVector(lines);
 	WriteToFile(file, toWrite);
 }
 

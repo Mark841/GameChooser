@@ -426,7 +426,7 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 	return custom;
 }
 
-//TODO - doesnt work for filter alphabetically
+//TODO - doesn't work for filter alphabetically
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
 {
 	std::string answer;

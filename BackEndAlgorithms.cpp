@@ -68,7 +68,7 @@ void BackEndAlgorithms::ScanAllDrives()
     for (char &drive : allDrives)
     {
         // Add threads to vector of threads to keep track of them
-        threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+        threadVector.emplace_back([&]() { ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
     }
 
     // Re-join threads to main thread
@@ -94,44 +94,13 @@ void BackEndAlgorithms::ScanAllDrivesInitial()
     for (char &drive : allDrives)
     {
         // Add threads to vector of threads to keep track of them
-        threadVector.emplace_back([&]() {ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
+        threadVector.emplace_back([&]() { ThreadScanDrive(drive); }); // Pass by reference here, make sure the object lifetime is correct
     }
 
     // Re-join threads to main thread
     for (auto& thread : threadVector)
     {
         thread.join();
-    }
-
-    localFileData->exists = true;
-}
-
-void BackEndAlgorithms::ScanAllDrivesNonThreaded()
-{
-
-    std::vector<char> allDrives = GetDriveNames();
-    int driveIndex = 0;
-
-    for (char drive : allDrives)
-    {
-        std::cout << "Scanning drive: " << drive << std::endl;
-        ScanDrive(drive);
-        std::cout << "Scanned drive: " << drive << std::endl;
-    }
-
-    localFileData->exists = true;
-}
-void BackEndAlgorithms::ScanAllDrivesInitialNonThreaded()
-{
-    std::vector<char> allDrives = GetDriveNames();
-    int driveIndex = 0;
-
-    for (unsigned int drivesIndex = 0; drivesIndex < allDrives.size(); drivesIndex++)
-    {
-        localFileData->driveNames[drivesIndex] = allDrives[drivesIndex];
-        std::cout << "Scanning drive: " << allDrives[drivesIndex] << std::endl;
-        ScanDrive(allDrives[drivesIndex]);
-        std::cout << "Scanned drive: " << allDrives[drivesIndex] << std::endl;
     }
 
     localFileData->exists = true;
@@ -168,86 +137,57 @@ std::vector<char> BackEndAlgorithms::GetDriveNames()
 }
 std::string BackEndAlgorithms::GetDriveNamesString()
 {
-    return GetStringFromStringArray(localFileData->driveNames);
+    return GetStringFromVector(localFileData->driveNames);
 }
 std::vector<std::string> BackEndAlgorithms::GetFolderLocationsStrings()
 {
-    return GetStringsFrom2DStringArray(localFileData->directoryLocationsOnDrive);
+    return GetStringsFrom2DVector(localFileData->directoryLocationsOnDrive);
 }
 std::vector<std::string> BackEndAlgorithms::GetStoreLocationsStrings()
 {
-    return GetStringsFrom2DStringArray(localFileData->storeLocationsOnDrive);
+    return GetStringsFrom2DVector(localFileData->storeLocationsOnDrive);
 }
 std::vector<std::string> BackEndAlgorithms::GetIsFolderOnDriveStrings()
 {
-    return GetStringsFrom2DBoolArray(localFileData->isDirectoryOnDrive);
+    return GetStringsFrom2DVector(localFileData->isDirectoryOnDrive);
 }
 std::vector<std::string> BackEndAlgorithms::GetIsStoreOnDriveStrings()
 {
-    return GetStringsFrom2DBoolArray(localFileData->isStoreOnDrive);
+    return GetStringsFrom2DVector(localFileData->isStoreOnDrive);
 }
 std::string BackEndAlgorithms::GetNoOfFoldersOnDriveString()
 {
-    return GetStringFromIntArray(localFileData->numberOfDirectoriesOnDrive);
+    return GetStringFromVector(localFileData->numberOfDirectoriesOnDrive);
 }
 std::string BackEndAlgorithms::GetNoOfStoresOnDriveString()
 {
-    return GetStringFromIntArray(localFileData->numberOfStoresOnDrive);
+    return GetStringFromVector(localFileData->numberOfStoresOnDrive);
 }
 
-//TODO MakeGeneric
-std::string BackEndAlgorithms::GetStringFromIntArray(std::vector<int> intArray)
+template <typename T>
+std::string BackEndAlgorithms::GetStringFromVector(std::vector<T> vector)
 {
     std::string fileEntryLine = "";
-    for (unsigned i = 0; i < intArray.size(); i++)
+    for (unsigned i = 0; i < vector.size(); i++)
     {
-        fileEntryLine += std::to_string(intArray[i]);
-        if (i != intArray.size() - 1) {
+        fileEntryLine += ToString(vector[i]);
+        if (i != vector.size() - 1) {
             fileEntryLine += "|";
         }
     }
     return fileEntryLine;
 }
-std::string BackEndAlgorithms::GetStringFromStringArray(std::vector<std::string> stringArray)
-{
-    std::string fileEntryLine = "";
-    for (unsigned int i = 0; i < stringArray.size(); i++)
-    {
-        fileEntryLine += stringArray[i];
-        if (i != stringArray.size() - 1) {
-            fileEntryLine += "|";
-        }
-    }
-    return fileEntryLine;
-}
-std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DStringArray(std::vector<std::vector<std::string>> stringArray)
+template <typename T>
+std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DVector(std::vector<std::vector<T>> vector)
 {
     std::vector<std::string> fileEntries;
     std::string fileEntryLine = "";
-    for (std::vector<std::string> driveString : stringArray)
+    for (std::vector<T> driveString : vector)
     {
         fileEntryLine = "";
         for (unsigned int i = 0; i < driveString.size(); i++)
         {
-            fileEntryLine += driveString[i];
-            if (i != driveString.size() - 1) {
-                fileEntryLine += "|";
-            }
-        }
-        fileEntries.push_back(fileEntryLine);
-    }
-    return fileEntries;
-}
-std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vector<std::vector<bool>> boolArray)
-{
-    std::vector<std::string> fileEntries;
-    std::string fileEntryLine = "";
-    for (std::vector<bool> driveString : boolArray)
-    {
-        fileEntryLine = "";
-        for (unsigned int i = 0; i < driveString.size(); i++)
-        {
-            fileEntryLine += std::to_string(driveString[i]);
+            fileEntryLine += ToString(driveString[i]);
             if (i != driveString.size() - 1) {
                 fileEntryLine += "|";
             }
@@ -257,58 +197,63 @@ std::vector<std::string> BackEndAlgorithms::GetStringsFrom2DBoolArray(std::vecto
     return fileEntries;
 }
 
-//TODO - Can optimise by making a seperate method for each drive
 void BackEndAlgorithms::GetAllGamesFromFolders()
 {
     int driveIndex = 0;
-    int storeIndex = 0;
+
     allGames.clear();
     allGamesByDrive.clear();
     allGamesByDrive.resize(localFileData->amountOfDrives);
 
     for (std::vector<std::string> drive : localFileData->directoryLocationsOnDrive)
     {
-        std::string driveName = localFileData->driveNames[driveIndex];
-        for (std::string store : drive)
-        {
-            std::vector<std::filesystem::path> subDirectories;
-            if (!IsStringNullOrWhitespace(store) && std::filesystem::is_directory(store))
-            {
-                for (const auto& entry : std::filesystem::directory_iterator(store))
-                {
-                    if (std::filesystem::is_directory(entry))
-                    {
-                        subDirectories.push_back(entry.path());
-                    }
-                }
-            }
-            // For each game in storeFolder
-            for (std::filesystem::path sf : subDirectories)
-            {
-                std::string gameDirectory = sf.string();
-                std::string* currentSearchDirectoryPath = new std::string(gameDirectory);
-                std::string* foundLocationPath = new std::string("");
-
-                // If its trying to search something that is a directory AND if that directory has an exe in it somewhere - THEN assume its a game dir
-                if (std::filesystem::is_directory(gameDirectory) && RecurseSearchForExe(currentSearchDirectoryPath, foundLocationPath)
-                    && !IsGameDirWhitelisted(gameDirectory))
-                {
-                    GameData gameData;
-                    gameData.gameName = SplitStringAtUpperCase(sf.filename().string());
-                    gameData.gameDirectory = *foundLocationPath;
-                    gameData.gameExe = GetExeInDirectory(*foundLocationPath);
-                    gameData.store = STORE_ENUMS[storeIndex];
-                    gameData.drive = driveName[0]; // Use index 0 as want the first character which is drive letter
-                    allGames.push_back(gameData);
-                    allGamesByDrive[driveIndex].push_back(gameData);
-                }
-            }
-            storeIndex++;
-        }
-        storeIndex = 0;
+        GetAllGamesFromDrive(drive, driveIndex);
         driveIndex++;
     }
 }
+void BackEndAlgorithms::GetAllGamesFromDrive(const std::vector<std::string> directoryLocationsOnDrive, const int driveIndex)
+{
+    int storeIndex = 0;
+    std::string driveName = localFileData->driveNames[driveIndex];
+
+    for (std::string store : directoryLocationsOnDrive)
+    {
+        std::vector<std::filesystem::path> subDirectories;
+        if (!IsStringNullOrWhitespace(store) && std::filesystem::is_directory(store))
+        {
+            for (const auto& entry : std::filesystem::directory_iterator(store))
+            {
+                if (std::filesystem::is_directory(entry))
+                {
+                    subDirectories.push_back(entry.path());
+                }
+            }
+        }
+        // For each game in storeFolder
+        for (std::filesystem::path sf : subDirectories)
+        {
+            std::string gameDirectory = sf.string();
+            std::string* currentSearchDirectoryPath = new std::string(gameDirectory);
+            std::string* foundLocationPath = new std::string("");
+
+            // If its trying to search something that is a directory AND if that directory has an exe in it somewhere - THEN assume its a game dir
+            if (std::filesystem::is_directory(gameDirectory) && RecurseSearchForExe(currentSearchDirectoryPath, foundLocationPath)
+                && !IsGameDirWhitelisted(gameDirectory))
+            {
+                GameData gameData;
+                gameData.gameName = SplitStringAtUpperCase(sf.filename().string());
+                gameData.gameDirectory = *foundLocationPath;
+                gameData.gameExe = GetExeInDirectory(*foundLocationPath);
+                gameData.store = STORE_ENUMS[storeIndex];
+                gameData.drive = driveName[0]; // Use index 0 as want the first character which is drive letter
+                allGames.push_back(gameData);
+                allGamesByDrive[driveIndex].push_back(gameData);
+            }
+        }
+        storeIndex++;
+    }
+}
+
 std::vector<GameData> BackEndAlgorithms::GetGamesAlphabetically(bool descending)
 {
     std::vector<GameData> sortedGames = allGames;
@@ -602,12 +547,11 @@ bool BackEndAlgorithms::IsGameDirWhitelisted(const std::string dirName)
         || IsSubpath(dirName, "SteamVR"));
 }
 
-//TODO - Alternatively could do check if ASCII is below 91 or whatever lowercase 'a' is and then insert space before
-//TODO - make method for while loops
 std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
 {
     std::vector<std::string> insertAfterLetter;
     std::vector<std::string> subsequentLetterCheck;
+    std::smatch m;
 
     // Regex for lowercase followed by uppercase
     std::regex regex("([a-z])([A-Z])");
@@ -615,60 +559,17 @@ std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
     std::regex regex1("([a-z])([0-9])");
     // Regex for number followed by uppercase
     std::regex regex2("([0-9])([A-Z])");
-    std::string s = origString;
-    std::smatch m;
 
-    while (std::regex_search(s, m, regex)) {
-        int index = 0;
-        for (auto x : m)
-        {
-            if (index != 0)
-            {
-                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
-                {
-                    insertAfterLetter.push_back(m[1]);
-                    subsequentLetterCheck.push_back(m[2]);
-                }
-            }
-            index++;
-        }
-        s = m.suffix().str();
-    }
-    while (std::regex_search(s, m, regex1)) {
-        int index = 0;
-        for (auto x : m)
-        {
-            if (index != 0)
-            {
-                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
-                {
-                    insertAfterLetter.push_back(m[1]);
-                    subsequentLetterCheck.push_back(m[2]);
-                }
-            }
-            index++;
-        }
-        s = m.suffix().str();
-    }
-    while (std::regex_search(s, m, regex2)) {
-        int index = 0;
-        for (auto x : m)
-        {
-            if (index != 0)
-            {
-                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
-                {
-                    insertAfterLetter.push_back(m[1]);
-                    subsequentLetterCheck.push_back(m[2]);
-                }
-            }
-            index++;
-        }
-        s = m.suffix().str();
-    }
+    // Regex for lowercase followed by uppercase
+    RegexChecker(regex, origString, m, insertAfterLetter, subsequentLetterCheck);
+    // Regex for lowercase followed by number
+    RegexChecker(regex1, origString, m, insertAfterLetter, subsequentLetterCheck);
+    // Regex for number followed by uppercase
+    RegexChecker(regex2, origString, m, insertAfterLetter, subsequentLetterCheck);
 
     std::string seperatedString = "";
     int index = 0;
+
     for (char letter : origString)
     {
         seperatedString += letter;
@@ -693,7 +594,25 @@ std::string BackEndAlgorithms::SplitStringAtUpperCase(std::string origString)
 
     return seperatedString;
 }
-//TODO
+void BackEndAlgorithms::RegexChecker(std::regex regex, std::string origString, std::smatch match, std::vector<std::string>& insertAfterLetter, std::vector<std::string>& subsequentLetterCheck)
+{
+    while (std::regex_search(origString, match, regex)) {
+        int index = 0;
+        for (auto x : match)
+        {
+            if (index != 0)
+            {
+                if (index == 1) // save character into array so can check that when iterating through string and then insert whitespace after the char
+                {
+                    insertAfterLetter.push_back(match[1]);
+                    subsequentLetterCheck.push_back(match[2]);
+                }
+            }
+            index++;
+        }
+        origString = match.suffix().str();
+    }
+}
 bool BackEndAlgorithms::DoesDirectoryContainExe(std::filesystem::path dir)
 {
     for (const auto& entry : std::filesystem::directory_iterator(dir))
@@ -705,7 +624,6 @@ bool BackEndAlgorithms::DoesDirectoryContainExe(std::filesystem::path dir)
     }
     return false;
 }
-//TODO
 std::string BackEndAlgorithms::GetExeInDirectory(std::filesystem::path dir)
 {
 
