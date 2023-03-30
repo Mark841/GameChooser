@@ -49,7 +49,7 @@ void ConsoleGUI::DisplayMainMenu()
 		std::cout << "Please enter a numbered option: ";
 		std::cin >> userInput;
 
-		while (userInput < 0 || userInput > 4)
+		while (userInput < 0 || userInput > 7)
 		{
 			std::cout << "Please enter a valid option: ";
 			std::cin >> userInput;
@@ -216,7 +216,44 @@ int ConsoleGUI::DisplayFolderIdentifier()
 //TODO - Give a random installed game to play
 int ConsoleGUI::DisplayRandomGame()
 {
-	return 0;
+	int userInput;
+	std::cout << "\n\nHello and welcome to the PC Game Store combiners display a random game, please select an option from below" << std::endl;
+
+jumpPoint:
+	std::vector<GameData> allGames = manager->GetAlgorithmsHandler()->GetGamesAlphabetically(false);
+
+	srand((int) time(0));
+	int index = 1 + (rand() % allGames.size());
+	std::cout << "\n\t\t\t" << allGames[index].gameName << "\n" << std::endl;
+
+
+	std::cout << "1 - Get another random game" << std::endl;
+	std::cout << "2 - Launch selected game" << std::endl;
+	std::cout << "3 - Return to Main Menu" << std::endl;
+	std::cout << "0 - EXIT" << std::endl;
+	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
+	std::cout << "Please enter a numbered option: ";
+	std::cin >> userInput;
+
+	while (userInput < 0 || userInput > 3)
+	{
+		std::cout << "Please enter a valid option: ";
+		std::cin >> userInput;
+	}
+	switch (userInput)
+	{
+	case 1:
+		goto jumpPoint;
+	case 2:
+		//TODO - launch selected game
+	case 3:
+		std::cout << "Returning to Main Menu" << std::endl;
+		break;
+	default:
+		std::cout << "EXITING SYSTEM" << std::endl;
+		return -1;
+	}
+	return -5;
 }
 
 //TODO - View all games on system
@@ -426,12 +463,12 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 	return custom;
 }
 
-//TODO - doesn't work for filter alphabetically
 bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
 {
-	std::string answer;
+	std::string answer = "";
 	std::cout << "Would you like to " << aboutValue << ", if you would please type 'y' or 'yes' and then press ENTER: " << std::endl;
-	std::getline(std::cin, answer);
+	std::cin >> answer;
+	std::cout<< std::endl;
 
 	if (answer == "y" || answer == "yes")
 	{
