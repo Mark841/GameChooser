@@ -20,10 +20,12 @@ public:
 	void WriteWhitelistsToFileAppend();
 	void WriteWhitelistsToFileOverwrite();
 	void WriteCustomDirectoriesToFileOverwrite();
+	void WriteLastPlayedGameToFileOverwrite(GameData game);
 
 	void ReadLocalDataFromFile();
 	void ReadWhitelistDataFromFile();
 	void ReadCustomDirectoriesDataFromFile();
+	void ReadLastPlayedGameFromFile();
 
 private:
 	int ProcessFileLineInt(std::string value);

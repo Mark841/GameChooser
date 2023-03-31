@@ -36,6 +36,12 @@ public:
 		algorithms->GetAllGamesFromFolders();
 	}
 
+	void SetLastPlayedGame(const GameData& game)
+	{
+		*(algorithms->GetLastPlayedGameData()) = game;
+		fileHandler->WriteLastPlayedGameToFileOverwrite(game);
+	}
+
 	inline FileManager* GetFileManagerHandler() { return fileHandler; }
 	inline BackEndAlgorithms* GetAlgorithmsHandler() { return algorithms; }
 

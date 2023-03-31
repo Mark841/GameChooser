@@ -47,6 +47,8 @@ public:
 	std::vector<std::vector<GameData>> GetGamesByDrive();
 	std::vector<std::vector<GameData>> GetGamesByStore();
 
+	void LaunchGame(const GameData game);
+
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
 		std::vector<int> numberOfFoldersOnDrive, std::vector<int> numberOfStoresOnDrive, std::string lastPlayed) 
@@ -66,6 +68,7 @@ public:
 	inline StoresFile* GetLocalData() { return localFileData; }
 	inline WhitelistData* GetWhitelistData() { return whitelistsData; }
 	inline CustomDirectoryData* GetCustomDirectoryData() { return customDirectoryData; }
+	inline GameData* GetLastPlayedGameData() { return lastPlayedGame; }
 	inline void AddToWhitelistData(std::vector<std::string> dataVector) 
 	{
 		for (std::string data : dataVector) { whitelistsData->directoryNames.push_back(data); }
@@ -90,12 +93,64 @@ public:
 		}
 	}
 
+	template <typename T> std::string ToString(const T& t) { return std::to_string(t); }
+	std::string ToString(const std::string& t) { return t; }
+	std::string ToString(const Stores& store)
+	{
+		switch (store)
+		{
+		case Stores::STEAM: return "STEAM";
+		case Stores::EA: return "EA";
+		case Stores::UBISOFT: return "UBISOFT";
+		case Stores::EPIC: return "EPIC";
+		case Stores::ROCKSTAR: return "ROCKSTAR";
+		case Stores::BLIZZARD: return "BLIZZARD";
+		default:
+			return "NOT VALID STORE";
+		}
+	}
+	std::string ToString(const GameData& game)
+	{
+		std::string gameString = game.gameName + "|" + game.gameDirectory + "|" + game.gameExe + "|" + ToString(game.store) + "|" + game.drive;
+	}
+	std::vector<std::string> GetGameValues(GameData game)
+	{
+		std::vector<std::string> gameData;
+		gameData.push_back(game.gameName);
+		gameData.push_back(game.gameDirectory);
+		gameData.push_back(game.gameExe);
+		gameData.push_back(ToString(game.store));
+		gameData.push_back(std::to_string(game.drive));
+		return gameData;
+	}
+	Stores SetStoreValue(const std::string store)
+	{
+		if ("STEAM") return Stores::STEAM;
+		if ("EA") return Stores::EA;
+		if ("UBISOFT") return Stores::UBISOFT;
+		if ("EPIC") return Stores::EPIC;
+		if ("ROCKSTAR") return Stores::ROCKSTAR;
+		if ("BLIZZARD") return Stores::BLIZZARD;
+		else return Stores::NOSTORE;
+	}
+	GameData SetGameDataValues(const std::vector<std::string> gameValues)
+	{
+		GameData game;
+		game.gameName = gameValues[0];
+		game.gameDirectory = gameValues[1];
+		game.gameExe = gameValues[2];
+		game.store = SetStoreValue(gameValues[3]);
+		game.drive = gameValues[4][0];
+		return game;
+	}
+
 private:
 	BackEndAlgorithms() 
 	{
 		localFileData = new StoresFile();
 		whitelistsData = new WhitelistData();
 		customDirectoryData = new CustomDirectoryData();
+		lastPlayedGame = new GameData();
 	}
 
 	inline void ThreadScanDrive(const char drive);
@@ -120,13 +175,11 @@ private:
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
 
-	template <typename T> std::string ToString(const T& t) { return std::to_string(t); }
-	std::string ToString(const std::string& t) { return t; }
-
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;
 	WhitelistData* whitelistsData;
 	CustomDirectoryData* customDirectoryData;
+	GameData* lastPlayedGame;
 	std::vector<GameData> allGames;
 	std::vector<std::vector<GameData>> allGamesByDrive;
 };

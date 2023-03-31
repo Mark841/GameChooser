@@ -12,7 +12,8 @@ enum class Stores
 	UBISOFT,
 	EPIC,
 	ROCKSTAR,
-	BLIZZARD
+	BLIZZARD,
+	NOSTORE
 };
 struct StoresFile
 {
@@ -50,7 +51,6 @@ struct GameData
 	Stores store;
 	char drive;
 };
-
 
 static std::string StoreToString(Stores store)
 {

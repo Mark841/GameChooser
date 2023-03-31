@@ -74,6 +74,7 @@ void ConsoleGUI::DisplayMainMenu()
 			break;
 		case 5:
 			std::cout << "Play last played game has been selected" << std::endl;
+			manager->GetAlgorithmsHandler()->LaunchGame(*(manager->GetAlgorithmsHandler()->GetLastPlayedGameData()));
 			break;
 		case 6:
 			std::cout << "Open stores page has been selected" << std::endl;
@@ -167,7 +168,7 @@ int ConsoleGUI::DisplayFolderIdentifier()
 	int userInput;
 	std::cout << "\n\nHello and welcome to the PC Game Store combiners specifying store or game folder locations on drive for next scan or whitelist directory names to not search in (can drastically speed up drive scanning), please select an option from below" << std::endl;
 	std::cout << "1 - Enter custom directory names" << std::endl;
-	std::cout << "2 - Enter custom directory names" << std::endl;
+	std::cout << "2 - Enter new whitelist directory names" << std::endl;
 	std::cout << "3 - Return to Main Menu" << std::endl;
 	std::cout << "0 - EXIT" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
@@ -213,7 +214,7 @@ int ConsoleGUI::DisplayFolderIdentifier()
 	return -5;
 }
 
-//TODO - Give a random installed game to play
+//TOTEST
 int ConsoleGUI::DisplayRandomGame()
 {
 	int userInput;
@@ -245,7 +246,9 @@ jumpPoint:
 	case 1:
 		goto jumpPoint;
 	case 2:
-		//TODO - launch selected game
+		manager->SetLastPlayedGame(allGames[index]);
+		manager->GetAlgorithmsHandler()->LaunchGame(allGames[index]);
+		break;
 	case 3:
 		std::cout << "Returning to Main Menu" << std::endl;
 		break;
@@ -439,7 +442,7 @@ std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(std::string purp
 
 std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 {
-	std::string platformName = StoreToString(store);
+	std::string platformName = manager->GetAlgorithmsHandler()->ToString(store);
 	std::vector<std::string> custom;
 
 	std::cout << "If you have any CUSTOM DIRECTORY names for your " << platformName << " games library, please enter each name and then press ENTER, if you have no custom directory names please type 'n' or 'no' and press ENTER: " << std::endl;

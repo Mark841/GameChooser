@@ -5,6 +5,7 @@ FileManager::FileManager(const std::string filename)
 	ReadLocalDataFromFile();
 	ReadWhitelistDataFromFile();
 	ReadCustomDirectoriesDataFromFile();
+	ReadLastPlayedGameFromFile();
 }
 FileManager::~FileManager()
 {
@@ -145,6 +146,22 @@ void FileManager::WriteCustomDirectoriesToFileOverwrite()
 
 	file.close();
 }
+void FileManager::WriteLastPlayedGameToFileOverwrite(GameData game)
+{
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+
+	std::ofstream file(LAST_PLAYED_GAME_FILE_FILENAME);
+	file.open(LAST_PLAYED_GAME_FILE_FILENAME, std::ios::out);
+
+	if (!file.is_open())
+	{
+		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << LAST_PLAYED_GAME_FILE_FILENAME << " OR PLEASE CLOSE THE " << LAST_PLAYED_GAME_FILE_FILENAME << " FILE" << std::endl;
+	}
+
+	WriteToFile(&file, algorithms->GetGameValues(game));
+
+	file.close();
+}
 
 //TODO - Clauses for if file is empty then fill it - Why am i not using localDataFile here and instead creating a new file, keep one and get rid of the other
 void FileManager::ReadLocalDataFromFile()
@@ -259,6 +276,30 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 		if (i == 1) { customDirectoryData->eaDirectories = ProcessFileLineStringVector(lines[i]); }
 		if (i == 2) { customDirectoryData->ubisoftDirectories = ProcessFileLineStringVector(lines[i]); }
 		if (i == 3) { customDirectoryData->epicDirectories = ProcessFileLineStringVector(lines[i]); }
+	}
+
+	file.close();
+}
+//TODO
+void FileManager::ReadLastPlayedGameFromFile()
+{
+	std::fstream file(LAST_PLAYED_GAME_FILE_FILENAME);
+	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+
+	file.open(LAST_PLAYED_GAME_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
+	if (!file.is_open())
+	{
+		std::cout << "ISSUE WITH THE " << LAST_PLAYED_GAME_FILE_FILENAME << " FILE" << std::endl;
+	}
+
+	file.clear();
+	file.seekg(0, std::ios::beg);
+
+	std::vector<std::string> gameData = ReadLinesFromFile(&file);
+	GameData* game = algorithms->GetLastPlayedGameData();
+	if (gameData.size() > 0)
+	{
+		*game = algorithms->SetGameDataValues(gameData);
 	}
 
 	file.close();

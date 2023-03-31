@@ -318,6 +318,13 @@ std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
     return sortedGames;
 }
 
+//TODO
+void BackEndAlgorithms::LaunchGame(const GameData game)
+{
+    //system((game.gameExe).c_str());
+    ShellExecuteA(NULL, NULL, (game.gameExe).c_str(), NULL, NULL, SW_SHOW);
+}
+
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
 
 void BackEndAlgorithms::ThreadScanDrive(const char drive)

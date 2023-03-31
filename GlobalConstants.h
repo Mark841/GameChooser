@@ -10,6 +10,7 @@ const std::vector<Stores> STORE_ENUMS = { Stores::STEAM, Stores::EA, Stores::UBI
 const std::string LOCAL_DATA_FILE_FILENAME = "GameStores.txt";
 const std::string WHITELIST_FILE_FILENAME = "Whitelists.txt";
 const std::string CUSTOM_DIRECTORY_FILE_FILENAME = "CustomDirectories.txt";
+const std::string LAST_PLAYED_GAME_FILE_FILENAME = "LastPlayedGameData.txt";
 const std::string STEAMAPPS_COMMON = "\\steamapps\\common";
 constexpr int NUMBER_OF_STORES = 4;
 constexpr int MAX_DIRECTORY_DEPTH = 6;
