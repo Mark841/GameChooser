@@ -17,6 +17,7 @@ public:
 			algorithms->InitLocalDataSizes();
 			algorithms->ScanAllDrivesInitial();
 			fileHandler->WriteLocalDataToFileOverwrite();
+			askToRescanOnStartup = false;
 		}
 		algorithms->GetAllGamesFromFolders();
 	}
@@ -44,8 +45,10 @@ public:
 
 	inline FileManager* GetFileManagerHandler() { return fileHandler; }
 	inline BackEndAlgorithms* GetAlgorithmsHandler() { return algorithms; }
+	inline bool GetAskToRescanOnStartup() { return askToRescanOnStartup; }
 
 protected:
+	bool askToRescanOnStartup = true;
 	FileManager* fileHandler = nullptr;
 	BackEndAlgorithms* algorithms = nullptr;
 };

@@ -6,7 +6,7 @@ D:\Steam\steamapps\common|D:\Program Files (x86)\Origin Games|D:\Ubisoft|D:\Epic
 F:\Steam\steamapps\common||F:\Ubisoft|
 G:\Steam\steamapps\common||G:\Ubisoft|G:\Epic
 H:\SteamLibrary\steamapps\common|H:\Origin||H:\Epic
-C:\Program Files (x86)\Steam|C:\Program Files\Electronic Arts\EA Desktop\EA Desktop|C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher|C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64
+C:\Program Files (x86)\Steam\Steam.exe|C:\Program Files\Electronic Arts\EA Desktop\EA Desktop\EALauncher.exe|C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\UbisoftGameLauncher.exe|C:\Program Files (x86)\Epic Games\Launcher\Engine\Binaries\Win64\EpicGamesLauncher.exe
 |||
 |||
 |||

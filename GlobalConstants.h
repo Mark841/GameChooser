@@ -16,5 +16,10 @@ constexpr int NUMBER_OF_STORES = 4;
 constexpr int MAX_DIRECTORY_DEPTH = 6;
 constexpr int MAX_GAME_DIRECTORY_DEPTH = 8;
 
+const int STEAM_INDEX = 0;
+const int EA_INDEX = 1;
+const int UBISOFT_INDEX = 2;
+const int EPIC_INDEX = 3;
+
 
 #endif GLOBAL_CONSTANTS_HPP

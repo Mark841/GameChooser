@@ -31,7 +31,7 @@ void ConsoleGUI::NewStoresInstalledSinceLastRun()
 
 void ConsoleGUI::DisplayMainMenu()
 {
-	NewStoresInstalledSinceLastRun();
+	if (manager->GetAskToRescanOnStartup()) NewStoresInstalledSinceLastRun();
 
 	int userInput = 0;
 	while (userInput != -1)
@@ -244,8 +244,10 @@ jumpPoint:
 	switch (userInput)
 	{
 	case 1:
+		std::cout << "Selecting another random game: ";
 		goto jumpPoint;
 	case 2:
+		std::cout << "Opening " << allGames[index].gameName << ": ";
 		manager->SetLastPlayedGame(allGames[index]);
 		manager->GetAlgorithmsHandler()->LaunchGame(allGames[index]);
 		break;
@@ -343,20 +345,21 @@ int ConsoleGUI::DisplayAllGames()
 	return -5;
 }
 
-//TODO - Open stores
 int ConsoleGUI::DisplayStores()
 {
 	int userInput;
 	std::cout << "\n\nHello and welcome to the PC Game Store combiners TODO, please select an option from below" << std::endl;
-	std::cout << "1 - TODO" << std::endl;
-	std::cout << "2 - TODO" << std::endl;
-	std::cout << "3 - Return to Main Menu" << std::endl;
+	std::cout << "1 - Open Steam" << std::endl;
+	std::cout << "2 - Open Origin" << std::endl;
+	std::cout << "3 - Open Ubisoft" << std::endl;
+	std::cout << "4 - Open Epic" << std::endl;
+	std::cout << "5 - Return to Main Menu" << std::endl;
 	std::cout << "0 - EXIT" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Please enter a numbered option: ";
 	std::cin >> userInput;
 
-	while (userInput < 0 || userInput > 3)
+	while (userInput < 0 || userInput > 5)
 	{
 		std::cout << "Please enter a valid option: ";
 		std::cin >> userInput;
@@ -364,12 +367,22 @@ int ConsoleGUI::DisplayStores()
 	switch (userInput)
 	{
 	case 1:
-		std::cout << "TODO has been selected" << std::endl;
+		std::cout << "Open Steam has been selected" << std::endl;
+		manager->GetAlgorithmsHandler()->LaunchStore(Stores::STEAM);
 		break;
 	case 2:
-		std::cout << "TODO has been selected" << std::endl;
+		std::cout << "Open Origin has been selected" << std::endl;
+		manager->GetAlgorithmsHandler()->LaunchStore(Stores::EA);
 		break;
 	case 3:
+		std::cout << "Open Ubisoft has been selected" << std::endl;
+		manager->GetAlgorithmsHandler()->LaunchStore(Stores::UBISOFT);
+		break;
+	case 4:
+		std::cout << "Open Epic has been selected" << std::endl;
+		manager->GetAlgorithmsHandler()->LaunchStore(Stores::EPIC);
+		break;
+	case 5:
 		std::cout << "Returning to Main Menu" << std::endl;
 		break;
 	default:

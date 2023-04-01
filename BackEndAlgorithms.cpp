@@ -318,11 +318,59 @@ std::vector<std::vector<GameData>> BackEndAlgorithms::GetGamesByStore()
     return sortedGames;
 }
 
-//TODO
-void BackEndAlgorithms::LaunchGame(const GameData game)
+void BackEndAlgorithms::LaunchGame(const GameData& game)
 {
-    //system((game.gameExe).c_str());
-    ShellExecuteA(NULL, NULL, (game.gameExe).c_str(), NULL, NULL, SW_SHOW);
+    LaunchExe(game.gameExe);
+}
+//TODO
+void BackEndAlgorithms::LaunchStore(const Stores& store)
+{
+    switch (store)
+    {
+    case Stores::STEAM: 
+        for (unsigned int i = 0; i < localFileData->isStoreOnDrive.size(); i++)
+        {
+            if (localFileData->isStoreOnDrive[i][STEAM_INDEX])
+            {
+                LaunchExe(localFileData->storeLocationsOnDrive[i][STEAM_INDEX]);
+            }
+        }
+        break;
+    case Stores::EA:
+        for (unsigned int i = 0; i < localFileData->isStoreOnDrive.size(); i++)
+        {
+            if (localFileData->isStoreOnDrive[i][EA_INDEX])
+            {
+                LaunchExe(localFileData->storeLocationsOnDrive[i][EA_INDEX]);
+            }
+        }
+        break;
+    case Stores::UBISOFT:
+        for (unsigned int i = 0; i < localFileData->isStoreOnDrive.size(); i++)
+        {
+            if (localFileData->isStoreOnDrive[i][UBISOFT_INDEX])
+            {
+                LaunchExe(localFileData->storeLocationsOnDrive[i][UBISOFT_INDEX]);
+            }
+        }
+        break;
+    case Stores::EPIC:
+        for (unsigned int i = 0; i < localFileData->isStoreOnDrive.size(); i++)
+        {
+            if (localFileData->isStoreOnDrive[i][EPIC_INDEX])
+            {
+                LaunchExe(localFileData->storeLocationsOnDrive[i][EPIC_INDEX]);
+            }
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void BackEndAlgorithms::LaunchExe(const std::string exe)
+{
+    ShellExecuteA(NULL, NULL, exe.c_str(), NULL, NULL, SW_SHOW);
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
@@ -667,7 +715,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*steamFoundLocation + "\\Steam.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][0] = *steamFoundLocation;
+        localData->storeLocationsOnDrive[driveIndex][0] = *steamFoundLocation + "\\Steam.exe";
         localData->isStoreOnDrive[driveIndex][0] = true;
         (*noOfStores)++;
     }
@@ -678,7 +726,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*eaStoreLocation + "\\EADesktop.exe") || std::filesystem::exists(*eaStoreLocation + "\\EALauncher.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][1] = *eaStoreLocation;
+        localData->storeLocationsOnDrive[driveIndex][1] = *eaStoreLocation + "\\EALauncher.exe";
         localData->isStoreOnDrive[driveIndex][1] = true;
         (*noOfStores)++;
     }
@@ -689,7 +737,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfFolders)++;
     }
     if (std::filesystem::exists(*ubisoftFoundLocation + "\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][2] = *ubisoftFoundLocation + "\\Ubisoft Game Launcher";
+        localData->storeLocationsOnDrive[driveIndex][2] = *ubisoftFoundLocation + "\\Ubisoft Game Launcher\\UbisoftGameLauncher.exe";
         localData->isStoreOnDrive[driveIndex][2] = true;
         (*noOfStores)++;
     }
@@ -701,7 +749,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     }
     //if (std::filesystem::exists(*epicFoundLocation + "\\Launcher\\Engine\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
     if (std::filesystem::exists(*epicFoundLocation + "\\Launcher\\Portal\\Binaries\\Win64\\EpicGamesLauncher.exe")) {
-        localData->storeLocationsOnDrive[driveIndex][3] = *epicFoundLocation + "\\Launcher\\Engine\\Binaries\\Win64";
+        localData->storeLocationsOnDrive[driveIndex][3] = *epicFoundLocation + "\\Launcher\\Engine\\Binaries\\Win64\\EpicGamesLauncher.exe";
         localData->isStoreOnDrive[driveIndex][3] = true;
         (*noOfStores)++;
     }

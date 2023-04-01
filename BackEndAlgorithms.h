@@ -47,7 +47,9 @@ public:
 	std::vector<std::vector<GameData>> GetGamesByDrive();
 	std::vector<std::vector<GameData>> GetGamesByStore();
 
-	void LaunchGame(const GameData game);
+	void LaunchGame(const GameData& game);
+	void LaunchStore(const Stores& store);
+	void LaunchExe(const std::string exe);
 
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
