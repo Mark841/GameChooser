@@ -261,7 +261,6 @@ jumpPoint:
 	return -5;
 }
 
-//TODO - View all games on system
 int ConsoleGUI::DisplayAllGames()
 {
 	int userInput;
@@ -348,7 +347,7 @@ int ConsoleGUI::DisplayAllGames()
 int ConsoleGUI::DisplayStores()
 {
 	int userInput;
-	std::cout << "\n\nHello and welcome to the PC Game Store combiners TODO, please select an option from below" << std::endl;
+	std::cout << "\n\nHello and welcome to the PC Game Store combiners store selector, please select an option from below" << std::endl;
 	std::cout << "1 - Open Steam" << std::endl;
 	std::cout << "2 - Open Origin" << std::endl;
 	std::cout << "3 - Open Ubisoft" << std::endl;
@@ -396,16 +395,15 @@ int ConsoleGUI::DisplayStores()
 int ConsoleGUI::DisplayStoresWithSearch()
 {
 	int userInput;
-	std::cout << "\n\nHello and welcome to the PC Game Store combiners TODO, please select an option from below" << std::endl;
-	std::cout << "1 - TODO" << std::endl;
-	std::cout << "2 - TODO" << std::endl;
-	std::cout << "3 - Return to Main Menu" << std::endl;
+	std::cout << "\n\nHello and welcome to the PC Game Store combiners store searcher, please select an option from below" << std::endl;
+	std::cout << "1 - Search for a game" << std::endl;
+	std::cout << "2 - Return to Main Menu" << std::endl;
 	std::cout << "0 - EXIT" << std::endl;
 	std::cout << "---------------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Please enter a numbered option: ";
 	std::cin >> userInput;
 
-	while (userInput < 0 || userInput > 3)
+	while (userInput < 0 || userInput > 2)
 	{
 		std::cout << "Please enter a valid option: ";
 		std::cin >> userInput;
@@ -413,12 +411,24 @@ int ConsoleGUI::DisplayStoresWithSearch()
 	switch (userInput)
 	{
 	case 1:
-		std::cout << "TODO has been selected" << std::endl;
+	{
+		std::cout << "Search for a game has been selected" << std::endl;
+
+		std::cout << "\nPlease enter a game to search for: " << std::endl;
+		std::string gameName;
+		std::cin >> gameName;
+
+		std::vector<std::string> gameOnStores = manager->GetAlgorithmsHandler()->SearchStores(gameName);
+
+		std::cout << "The game " << gameName << " was found on the stores below" << std::endl;
+		for (unsigned int i = 0; i < NUMBER_OF_STORES; i++)
+		{
+			std::cout << STORE_NAMES_UPPER[i] << "\t-\t" << gameOnStores[i] << std::endl;
+		}
+
 		break;
+	}
 	case 2:
-		std::cout << "TODO has been selected" << std::endl;
-		break;
-	case 3:
 		std::cout << "Returning to Main Menu" << std::endl;
 		break;
 	default:

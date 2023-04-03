@@ -51,6 +51,9 @@ public:
 	void LaunchStore(const Stores& store);
 	void LaunchExe(const std::string exe);
 
+	std::vector<std::string> SearchStores(const std::string gameName);
+	std::string SearchStore(const Stores& storeName, const std::string gameName);
+
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
 		std::vector<int> numberOfFoldersOnDrive, std::vector<int> numberOfStoresOnDrive, std::string lastPlayed) 

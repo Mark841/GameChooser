@@ -322,7 +322,6 @@ void BackEndAlgorithms::LaunchGame(const GameData& game)
 {
     LaunchExe(game.gameExe);
 }
-//TODO
 void BackEndAlgorithms::LaunchStore(const Stores& store)
 {
     switch (store)
@@ -371,6 +370,81 @@ void BackEndAlgorithms::LaunchStore(const Stores& store)
 void BackEndAlgorithms::LaunchExe(const std::string exe)
 {
     ShellExecuteA(NULL, NULL, exe.c_str(), NULL, NULL, SW_SHOW);
+}
+
+std::vector<std::string> BackEndAlgorithms::SearchStores(const std::string gameName)
+{
+    std::vector<std::string> gameOnStores;
+    gameOnStores.push_back(SearchStore(Stores::STEAM, gameName));
+    gameOnStores.push_back(SearchStore(Stores::EA, gameName));
+    gameOnStores.push_back(SearchStore(Stores::UBISOFT, gameName));
+    gameOnStores.push_back(SearchStore(Stores::EPIC, gameName));
+    return gameOnStores;
+}
+//TODO
+std::string BackEndAlgorithms::SearchStore(const Stores& storeName, const std::string gameName)
+{
+    // --- STEAM ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    {
+        if (storeName == Stores::STEAM)
+        {
+            // If game is found on store
+            if ()
+            {
+                return;
+            }
+            // If game is not found on store, return empty
+            else
+            {
+                return "";
+            }
+        }
+    }
+    // --- EA ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    {
+        if (storeName == Stores::EA)
+        {   // If game is found on store
+            if ()
+            {
+                return;
+            }
+            // If game is not found on store, return empty
+            else
+            {
+                return "";
+            }
+        }
+    }
+    // --- UBISOFT ----------------------------------------------------------------------------------------------------------------------------------------------------------
+    {
+        if (storeName == Stores::UBISOFT)
+        {   // If game is found on store
+            if ()
+            {
+                return;
+            }
+            // If game is not found on store, return empty
+            else
+            {
+              return "";
+            }
+        }
+    }
+    // --- EPIC -------------------------------------------------------------------------------------------------------------------------------------------------------------
+    {
+        if (storeName == Stores::EPIC)
+        {   // If game is found on store
+            if ()
+            {
+                return;
+            }
+            // If game is not found on store, return empty
+            else
+            {
+            return "";
+            }
+        }
+    }
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
