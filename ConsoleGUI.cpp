@@ -418,12 +418,12 @@ int ConsoleGUI::DisplayStoresWithSearch()
 		std::string gameName;
 		std::cin >> gameName;
 
-		std::vector<std::string> gameOnStores = manager->GetAlgorithmsHandler()->SearchStores(gameName);
+		std::vector<SearchGameData> gameOnStores = manager->GetAlgorithmsHandler()->SearchStores(gameName);
 
 		std::cout << "The game " << gameName << " was found on the stores below" << std::endl;
 		for (unsigned int i = 0; i < NUMBER_OF_STORES; i++)
 		{
-			std::cout << STORE_NAMES_UPPER[i] << "\t-\t" << gameOnStores[i] << std::endl;
+			std::cout << STORE_NAMES_UPPER[i] << "\t-\t" << gameOnStores[i].price << std::endl;
 		}
 
 		break;

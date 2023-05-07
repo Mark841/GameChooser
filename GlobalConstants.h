@@ -12,6 +12,13 @@ const std::string WHITELIST_FILE_FILENAME = "Whitelists.txt";
 const std::string CUSTOM_DIRECTORY_FILE_FILENAME = "CustomDirectories.txt";
 const std::string LAST_PLAYED_GAME_FILE_FILENAME = "LastPlayedGameData.txt";
 const std::string STEAMAPPS_COMMON = "\\steamapps\\common";
+
+const std::string STEAM_SEARCH_URL = "https://store.steampowered.com/search/?term=";
+const std::string ORIGIN_SEARCH_URL = "https://www.origin.com/gbr/en-us/search?searchString=";
+const std::string UBISOFT_SEARCH_URL = "https://store.ubi.com/uk/search?q=";
+const std::string UBISOFT_SEARCH_END_URL = "&prefn1=productTypeRefinementString&prefv1=games";
+const std::string EPIC_SEARCH_URL = "https://www.epicgames.com/store/en-US/store-search?q=";
+
 constexpr int NUMBER_OF_STORES = 4;
 constexpr int MAX_DIRECTORY_DEPTH = 6;
 constexpr int MAX_GAME_DIRECTORY_DEPTH = 8;

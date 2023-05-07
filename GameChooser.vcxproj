@@ -151,6 +151,7 @@
     <ClInclude Include="BackEndAlgorithms.h" />
     <ClInclude Include="BackEndManager.h" />
     <ClInclude Include="ConsoleGUI.h" />
+    <ClInclude Include="CurlPlusPlus.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="GUI.h" />
@@ -158,6 +159,5 @@
     <ClInclude Include="StorageStructures.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

@@ -372,79 +372,44 @@ void BackEndAlgorithms::LaunchExe(const std::string exe)
     ShellExecuteA(NULL, NULL, exe.c_str(), NULL, NULL, SW_SHOW);
 }
 
-std::vector<std::string> BackEndAlgorithms::SearchStores(const std::string gameName)
+std::vector<SearchGameData> BackEndAlgorithms::SearchStores(const std::string gameName)
 {
-    std::vector<std::string> gameOnStores;
-    gameOnStores.push_back(SearchStore(Stores::STEAM, gameName));
-    gameOnStores.push_back(SearchStore(Stores::EA, gameName));
-    gameOnStores.push_back(SearchStore(Stores::UBISOFT, gameName));
-    gameOnStores.push_back(SearchStore(Stores::EPIC, gameName));
+    std::vector<SearchGameData> gameOnStores;
+    for (Stores store : STORE_ENUMS)
+    {
+        SearchGameData* result = SearchStore(store, gameName);
+        if (result != nullptr)
+        {
+            gameOnStores.push_back(*result);
+        }
+    }
     return gameOnStores;
 }
 //TODO
-std::string BackEndAlgorithms::SearchStore(const Stores& storeName, const std::string gameName)
+SearchGameData* BackEndAlgorithms::SearchStore(const Stores& storeName, const std::string gameName)
 {
+    SearchGameData* resultData = nullptr;
     // --- STEAM ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if (storeName == Stores::STEAM)
     {
-        if (storeName == Stores::STEAM)
-        {
-            // If game is found on store
-            if ()
-            {
-                return;
-            }
-            // If game is not found on store, return empty
-            else
-            {
-                return "";
-            }
-        }
+        SteamSearch(gameName, resultData);
     }
     // --- EA ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    else if (storeName == Stores::EA)
     {
-        if (storeName == Stores::EA)
-        {   // If game is found on store
-            if ()
-            {
-                return;
-            }
-            // If game is not found on store, return empty
-            else
-            {
-                return "";
-            }
-        }
+        EASearch(gameName, resultData);
     }
     // --- UBISOFT ----------------------------------------------------------------------------------------------------------------------------------------------------------
+    else if (storeName == Stores::UBISOFT)
     {
-        if (storeName == Stores::UBISOFT)
-        {   // If game is found on store
-            if ()
-            {
-                return;
-            }
-            // If game is not found on store, return empty
-            else
-            {
-              return "";
-            }
-        }
+        UbisoftSearch(gameName, resultData);
     }
     // --- EPIC -------------------------------------------------------------------------------------------------------------------------------------------------------------
+    else if (storeName == Stores::EPIC)
     {
-        if (storeName == Stores::EPIC)
-        {   // If game is found on store
-            if ()
-            {
-                return;
-            }
-            // If game is not found on store, return empty
-            else
-            {
-            return "";
-            }
-        }
+        EpicSearch(gameName, resultData);
     }
+    return resultData;
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
@@ -831,4 +796,28 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     delete currentSearchDirectoryPath;
     delete steamFoundLocation, eaDirLocation, eaStoreLocation, ubisoftFoundLocation, epicFoundLocation;
     delete foundSteam, foundEA, foundUbi, foundEpic;
+}
+
+
+bool BackEndAlgorithms::SteamSearch(const std::string gameName, SearchGameData* resultData)
+{
+    std::string searchURL = STEAM_SEARCH_URL + gameName;
+
+    CURLplusplus client;
+    std::string result = client.Get(searchURL).substr(59650, 2370);
+    std::cout << result << std::endl;
+
+    return resultData;
+}
+bool BackEndAlgorithms::EASearch(const std::string gameName, SearchGameData* resultData)
+{
+    return resultData;
+}
+bool BackEndAlgorithms::UbisoftSearch(const std::string gameName, SearchGameData* resultData)
+{
+    return resultData;
+}
+bool BackEndAlgorithms::EpicSearch(const std::string gameName, SearchGameData* resultData)
+{
+    return resultData;
 }

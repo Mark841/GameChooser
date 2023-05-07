@@ -51,6 +51,13 @@ struct GameData
 	Stores store;
 	char drive;
 };
+struct SearchGameData
+{
+	std::string gameName;
+	std::string webUrl;
+	double price;
+	double discount;
+};
 
 static std::string StoreToString(Stores store)
 {

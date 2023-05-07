@@ -6,12 +6,13 @@
 #include "windows.h"
 #include "fileapi.h"
 #include "FileManager.h"
+#include "CurlPlusPlus.h"
 #include <filesystem>
 #include <string>
 #include <vector>
 #include <regex>
 #include <thread>
-#include <ppl.h>
+#include <curl/curl.h>
 
 class BackEndAlgorithms
 {
@@ -51,8 +52,8 @@ public:
 	void LaunchStore(const Stores& store);
 	void LaunchExe(const std::string exe);
 
-	std::vector<std::string> SearchStores(const std::string gameName);
-	std::string SearchStore(const Stores& storeName, const std::string gameName);
+	std::vector<SearchGameData> SearchStores(const std::string gameName);
+	SearchGameData* SearchStore(const Stores& storeName, const std::string gameName);
 
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
@@ -179,6 +180,11 @@ private:
 	std::string GetExeInDirectory(std::filesystem::path dir);
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
+
+	bool SteamSearch(const std::string gameName, SearchGameData* resultData);
+	bool EASearch(const std::string gameName, SearchGameData* resultData);
+	bool UbisoftSearch(const std::string gameName, SearchGameData* resultData);
+	bool EpicSearch(const std::string gameName, SearchGameData* resultData);
 
     inline static BackEndAlgorithms* algorithms = nullptr;
 	StoresFile* localFileData;
