@@ -178,6 +178,7 @@ private:
 	void RegexChecker(std::regex regex, std::string origString, std::smatch match, std::vector<std::string>& insertAfterLetter, std::vector<std::string>& subsequentLetterCheck);
 	bool DoesDirectoryContainExe(std::filesystem::path dir);
 	std::string GetExeInDirectory(std::filesystem::path dir);
+	std::string ToLower(std::string string);
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
 

@@ -731,6 +731,12 @@ std::string BackEndAlgorithms::GetExeInDirectory(std::filesystem::path dir)
     return "null";
 }
 
+std::string BackEndAlgorithms::ToLower(std::string string)
+{
+    std::transform(string.begin(), string.end(), string.begin(), [](unsigned char c) { return std::tolower(c); });
+    return string;
+}
+
 void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders)
 {
     std::string* drive = &(localData->driveNames[driveIndex]);
@@ -804,8 +810,32 @@ bool BackEndAlgorithms::SteamSearch(const std::string gameName, SearchGameData* 
     std::string searchURL = STEAM_SEARCH_URL + gameName;
 
     CURLplusplus client;
-    std::string result = client.Get(searchURL).substr(59650, 2370);
-    std::cout << result << std::endl;
+    std::string result = client.Get(searchURL).substr(59550, 7500);
+    std::string result2 = BackEndAlgorithms::ToLower(result);
+    int startSearchIndex = result2.find(gameName) - 150;
+
+    int urlStartIndex = result.find("href", startSearchIndex) + 6;                              // Plus 6 for the 'href="' at start of the span tag
+    int urlEndIndex = result.find("\r\n", urlStartIndex) - 1;                                   // Minus 1 for the '<' at start of the span tag
+    std::string url = result.substr(urlStartIndex, urlEndIndex - urlStartIndex);
+    
+    int nameStartIndex = result.find("title", startSearchIndex) + 7;                            // Plus 7 for the 'title="' at start of the span tag
+    int nameEndIndex = result.find("/span", nameStartIndex) - 1;                                // Minus 1 for the '<' at start of the span tag
+    std::string name = result.substr(nameStartIndex, nameEndIndex - nameStartIndex);
+
+    int priceStartIndex = result.find("data-price-final", startSearchIndex) + 18;               // Plus 18 for the 'data-price-final="' in the tag
+    int priceEndIndex = result.find("\"", priceStartIndex);
+    std::string price = result.substr(priceStartIndex, priceEndIndex - priceStartIndex);
+    price = price.substr(0, price.length() - 2) + "." + price.substr(price.length() - 2);
+    //resultData->price = price;
+
+    int discountStartIndex = result.find("search_discount", startSearchIndex);
+    if (discountStartIndex != 0)
+    {
+        discountStartIndex = result.find("span", discountStartIndex) + 5;       // Plus 5 for the 'span>' in the tag
+        int discountEndIndex = result.find("/span", discountStartIndex) - 1;    // Minus 1 for the '<' at start of the span tag
+        std::string discount = result.substr(discountStartIndex, discountEndIndex - discountStartIndex);
+        //resultData->discount = discount;
+    }
 
     return resultData;
 }

@@ -416,7 +416,10 @@ int ConsoleGUI::DisplayStoresWithSearch()
 
 		std::cout << "\nPlease enter a game to search for: " << std::endl;
 		std::string gameName;
+		
+		//TODO - only gets the first word of search entry ------------------------------------------------------------------
 		std::cin >> gameName;
+		// -----------------------------------------------------------------------------------------------------------------
 
 		std::vector<SearchGameData> gameOnStores = manager->GetAlgorithmsHandler()->SearchStores(gameName);
 
