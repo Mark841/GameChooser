@@ -415,11 +415,7 @@ int ConsoleGUI::DisplayStoresWithSearch()
 		std::cout << "Search for a game has been selected" << std::endl;
 
 		std::cout << "\nPlease enter a game to search for: " << std::endl;
-		std::string gameName;
-		
-		//TODO - only gets the first word of search entry ------------------------------------------------------------------
-		std::cin >> gameName;
-		// -----------------------------------------------------------------------------------------------------------------
+		std::string gameName = GetStringFromUser();
 
 		std::vector<SearchGameData> gameOnStores = manager->GetAlgorithmsHandler()->SearchStores(gameName);
 
@@ -443,7 +439,7 @@ int ConsoleGUI::DisplayStoresWithSearch()
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(std::string purpose)
+std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(const std::string purpose) const
 {
 	std::vector<std::string> custom;
 	std::cout << "Please enter the names for your " << purpose << ", please enter each name and then press ENTER, if you have no more to add please type 'n' or 'no' and press ENTER: " << std::endl;
@@ -456,7 +452,7 @@ std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(std::string purp
 		{
 			break;
 		}
-		if (customData != "")
+		if (!customData.empty())
 		{
 			custom.push_back(customData);
 		}
@@ -466,7 +462,22 @@ std::vector<std::string> ConsoleGUI::GetVectorOfStringsFromUser(std::string purp
 	return custom;
 }
 
-std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
+std::string ConsoleGUI::GetStringFromUser() const
+{
+	std::string custom;
+	while (true)
+	{
+		std::getline(std::cin, custom);
+		if (!custom.empty())
+		{
+			break;
+		}
+	}
+	std::cout << std::endl;
+	return custom;
+}
+
+std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(const Stores store) const
 {
 	std::string platformName = manager->GetAlgorithmsHandler()->ToString(store);
 	std::vector<std::string> custom;
@@ -481,7 +492,7 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 		{
 			break;
 		}
-		if (customDirectory != "")
+		if (!customDirectory.empty())
 		{
 			custom.push_back(customDirectory);
 		}
@@ -492,7 +503,7 @@ std::vector<std::string> ConsoleGUI::GetCustomDirectoryNames(Stores store)
 	return custom;
 }
 
-bool ConsoleGUI::GetYesOrNoFromUser(std::string aboutValue)
+bool ConsoleGUI::GetYesOrNoFromUser(const std::string aboutValue) const
 {
 	std::string answer = "";
 	std::cout << "Would you like to " << aboutValue << ", if you would please type 'y' or 'yes' and then press ENTER: " << std::endl;

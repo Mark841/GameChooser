@@ -10,47 +10,47 @@ class BackEndManager
 public:
 	BackEndManager() {
 		fileHandler = new FileManager("GameStores.txt");
-		algorithms = BackEndAlgorithms::GetInstance();
+		backEndAlgorithms = BackEndAlgorithms::GetInstance();
 
-		if (!algorithms->GetLocalData()->exists)
+		if (!backEndAlgorithms->GetLocalData()->exists)
 		{
-			algorithms->InitLocalDataSizes();
-			algorithms->ScanAllDrivesInitial();
+			backEndAlgorithms->InitLocalDataSizes();
+			backEndAlgorithms->ScanAllDrivesInitial();
 			fileHandler->WriteLocalDataToFileOverwrite();
 			askToRescanOnStartup = false;
 		}
-		algorithms->GetAllGamesFromFolders();
+		backEndAlgorithms->GetAllGamesFromFolders();
 	}
 	~BackEndManager() {
 		delete fileHandler;
-		delete algorithms;
+		delete backEndAlgorithms;
 	}
 
 	void ScanDrive(char driveName) {
-		algorithms->ScanDrive(driveName);
+		backEndAlgorithms->ScanDrive(driveName);
 		fileHandler->WriteLocalDataToFileOverwrite();
-		algorithms->GetAllGamesFromFolders();
+		backEndAlgorithms->GetAllGamesFromFolders();
 	}
 	void ScanAllDrives() {
-		algorithms->ScanAllDrives();
+		backEndAlgorithms->ScanAllDrives();
 		fileHandler->WriteLocalDataToFileOverwrite();
-		algorithms->GetAllGamesFromFolders();
+		backEndAlgorithms->GetAllGamesFromFolders();
 	}
 
 	void SetLastPlayedGame(const GameData& game)
 	{
-		*(algorithms->GetLastPlayedGameData()) = game;
+		*(backEndAlgorithms->GetLastPlayedGameData()) = game;
 		fileHandler->WriteLastPlayedGameToFileOverwrite(game);
 	}
 
 	inline FileManager* GetFileManagerHandler() { return fileHandler; }
-	inline BackEndAlgorithms* GetAlgorithmsHandler() { return algorithms; }
+	inline BackEndAlgorithms* GetAlgorithmsHandler() { return backEndAlgorithms; }
 	inline bool GetAskToRescanOnStartup() { return askToRescanOnStartup; }
 
 protected:
 	bool askToRescanOnStartup = true;
 	FileManager* fileHandler = nullptr;
-	BackEndAlgorithms* algorithms = nullptr;
+	BackEndAlgorithms* backEndAlgorithms = nullptr;
 };
 
 #endif BACKEND_MANAGER_HPP

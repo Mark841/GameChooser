@@ -12,6 +12,7 @@
 #include <vector>
 #include <regex>
 #include <thread>
+#include <algorithm>
 #include <curl/curl.h>
 
 class BackEndAlgorithms
@@ -53,7 +54,7 @@ public:
 	void LaunchExe(const std::string exe);
 
 	std::vector<SearchGameData> SearchStores(const std::string gameName);
-	SearchGameData* SearchStore(const Stores& storeName, const std::string gameName);
+	SearchGameData* SearchStore(const Stores& storeName, std::string gameName);
 
 	void SetLocalData(int amountOfDrives, int storeAmount, std::vector<std::string> driveNames, std::vector<std::vector<std::string>> folderLocationsOnDrive,
 		std::vector<std::vector<std::string>> storeLocationsOnDrive, std::vector<std::vector<bool>> isFolderOnDrive, std::vector<std::vector<bool>> isStoreOnDrive,
@@ -182,12 +183,12 @@ private:
 
 	void AllStores(StoresFile* localData, const int driveIndex, int* noOfStores, int* noOfFolders);
 
-	bool SteamSearch(const std::string gameName, SearchGameData* resultData);
-	bool EASearch(const std::string gameName, SearchGameData* resultData);
-	bool UbisoftSearch(const std::string gameName, SearchGameData* resultData);
-	bool EpicSearch(const std::string gameName, SearchGameData* resultData);
+	bool SteamSearch(std::string gameName, SearchGameData* resultData);
+	bool EASearch(std::string gameName, SearchGameData* resultData);
+	bool UbisoftSearch(std::string gameName, SearchGameData* resultData);
+	bool EpicSearch(std::string gameName, SearchGameData* resultData);
 
-    inline static BackEndAlgorithms* algorithms = nullptr;
+    inline static BackEndAlgorithms* backEndAlgorithms = nullptr;
 	StoresFile* localFileData;
 	WhitelistData* whitelistsData;
 	CustomDirectoryData* customDirectoryData;

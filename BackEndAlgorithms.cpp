@@ -4,14 +4,14 @@
 
 BackEndAlgorithms* BackEndAlgorithms::GetInstance()
 {
-    if (algorithms == NULL || algorithms == nullptr)
+    if (backEndAlgorithms == NULL || backEndAlgorithms == nullptr)
     {
-        algorithms = new BackEndAlgorithms();
-        return algorithms;
+        backEndAlgorithms = new BackEndAlgorithms();
+        return backEndAlgorithms;
     }
     else
     {
-        return algorithms;
+        return backEndAlgorithms;
     }
 }
 
@@ -385,10 +385,13 @@ std::vector<SearchGameData> BackEndAlgorithms::SearchStores(const std::string ga
     }
     return gameOnStores;
 }
-//TODO
-SearchGameData* BackEndAlgorithms::SearchStore(const Stores& storeName, const std::string gameName)
+//TODO - think about garbage collection of these SearchGameData values
+SearchGameData* BackEndAlgorithms::SearchStore(const Stores& storeName, std::string gameName)
 {
-    SearchGameData* resultData = nullptr;
+    // Replace any spaces in the URL with a +
+    std::replace(gameName.begin(), gameName.end(), ' ', '+');
+
+    SearchGameData* resultData = new SearchGameData();
     // --- STEAM ------------------------------------------------------------------------------------------------------------------------------------------------------------
     if (storeName == Stores::STEAM)
     {
@@ -754,7 +757,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     SearchForStoresAndFolders(currentSearchDirectoryPath, steamFoundLocation, eaDirLocation, eaStoreLocation, ubisoftFoundLocation, epicFoundLocation, foundSteam, foundEA, foundUbi, foundEpic);
 
     // Steam -------------------------------------------------------------------------------------------------
-    if (*steamFoundLocation != "") {
+    if (!(*steamFoundLocation).empty()) {
         localData->directoryLocationsOnDrive[driveIndex][0] = *steamFoundLocation + STEAMAPPS_COMMON;
         localData->isDirectoryOnDrive[driveIndex][0] = true;
         (*noOfFolders)++;
@@ -765,7 +768,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfStores)++;
     }
     // EA ------------------------------------------------------------------------------------------------
-    if (*eaDirLocation != "") {
+    if (!(*eaDirLocation).empty()) {
         localData->directoryLocationsOnDrive[driveIndex][1] = *eaDirLocation;
         localData->isDirectoryOnDrive[driveIndex][1] = true;
         (*noOfFolders)++;
@@ -776,7 +779,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfStores)++;
     }
     // Ubisoft -----------------------------------------------------------------------------------------------
-    if (*ubisoftFoundLocation != "") {
+    if (!(*ubisoftFoundLocation).empty()) {
         localData->directoryLocationsOnDrive[driveIndex][2] = *ubisoftFoundLocation;
         localData->isDirectoryOnDrive[driveIndex][2] = true;
         (*noOfFolders)++;
@@ -787,7 +790,7 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
         (*noOfStores)++;
     }
     // Epic --------------------------------------------------------------------------------------------------
-    if (*epicFoundLocation != "") {
+    if (!(*epicFoundLocation).empty()) {
         localData->directoryLocationsOnDrive[driveIndex][3] = *epicFoundLocation;
         localData->isDirectoryOnDrive[driveIndex][3] = true;
         (*noOfFolders)++;
@@ -804,50 +807,66 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
     delete foundSteam, foundEA, foundUbi, foundEpic;
 }
 
-
-bool BackEndAlgorithms::SteamSearch(const std::string gameName, SearchGameData* resultData)
+bool BackEndAlgorithms::SteamSearch(std::string gameName, SearchGameData* resultData)
 {
     std::string searchURL = STEAM_SEARCH_URL + gameName;
+    std::replace(gameName.begin(), gameName.end(), '+', ' ');
 
     CURLplusplus client;
-    std::string result = client.Get(searchURL).substr(59550, 7500);
+    std::string result = client.Get(searchURL).substr(59600, 7500);
     std::string result2 = BackEndAlgorithms::ToLower(result);
     int startSearchIndex = result2.find(gameName) - 150;
+    startSearchIndex = (startSearchIndex <= 0) ? 0 : startSearchIndex;
+    int finalIndex = startSearchIndex + 2500;
 
     int urlStartIndex = result.find("href", startSearchIndex) + 6;                              // Plus 6 for the 'href="' at start of the span tag
     int urlEndIndex = result.find("\r\n", urlStartIndex) - 1;                                   // Minus 1 for the '<' at start of the span tag
-    std::string url = result.substr(urlStartIndex, urlEndIndex - urlStartIndex);
+    resultData->webUrl = (urlStartIndex > finalIndex) ? NULL : result.substr(urlStartIndex, urlEndIndex - urlStartIndex);                   // If the found item would be after the end of the game's section of the code then set to NULL
     
     int nameStartIndex = result.find("title", startSearchIndex) + 7;                            // Plus 7 for the 'title="' at start of the span tag
     int nameEndIndex = result.find("/span", nameStartIndex) - 1;                                // Minus 1 for the '<' at start of the span tag
-    std::string name = result.substr(nameStartIndex, nameEndIndex - nameStartIndex);
+    resultData->gameName = (nameStartIndex > finalIndex) ? NULL : result.substr(nameStartIndex, nameEndIndex - nameStartIndex);               // If the found item would be after the end of the game's section of the code then set to NULL
 
     int priceStartIndex = result.find("data-price-final", startSearchIndex) + 18;               // Plus 18 for the 'data-price-final="' in the tag
     int priceEndIndex = result.find("\"", priceStartIndex);
     std::string price = result.substr(priceStartIndex, priceEndIndex - priceStartIndex);
     price = price.substr(0, price.length() - 2) + "." + price.substr(price.length() - 2);
-    //resultData->price = price;
+    try
+    {
+        resultData->price = (priceStartIndex > finalIndex) ? NULL : std::stod(price);               // If the found item would be after the end of the game's section of the code then set to NULL
+    }
+    catch (...)
+    {
+        resultData->price = NULL;
+    }
 
     int discountStartIndex = result.find("search_discount", startSearchIndex);
-    if (discountStartIndex != 0)
+    int discountSpanIndex = result.find("span", discountStartIndex) + 5;       // Plus 5 for the 'span>' in the tag
+    if (discountStartIndex != 0 && discountStartIndex <= finalIndex && discountSpanIndex < discountStartIndex + 100)
     {
-        discountStartIndex = result.find("span", discountStartIndex) + 5;       // Plus 5 for the 'span>' in the tag
-        int discountEndIndex = result.find("/span", discountStartIndex) - 1;    // Minus 1 for the '<' at start of the span tag
-        std::string discount = result.substr(discountStartIndex, discountEndIndex - discountStartIndex);
-        //resultData->discount = discount;
+        int discountEndIndex = result.find("/span", discountSpanIndex) - 1;    // Minus 1 for the '<' at start of the span tag
+        std::string discount = result.substr(discountSpanIndex, discountEndIndex - discountSpanIndex);
+        try 
+        {
+            resultData->discount = std::abs(std::stod(discount));
+        }
+        catch (...)
+        {
+            resultData->discount = NULL;
+        }
     }
 
     return resultData;
 }
-bool BackEndAlgorithms::EASearch(const std::string gameName, SearchGameData* resultData)
+bool BackEndAlgorithms::EASearch(std::string gameName, SearchGameData* resultData)
 {
     return resultData;
 }
-bool BackEndAlgorithms::UbisoftSearch(const std::string gameName, SearchGameData* resultData)
+bool BackEndAlgorithms::UbisoftSearch(std::string gameName, SearchGameData* resultData)
 {
     return resultData;
 }
-bool BackEndAlgorithms::EpicSearch(const std::string gameName, SearchGameData* resultData)
+bool BackEndAlgorithms::EpicSearch(std::string gameName, SearchGameData* resultData)
 {
     return resultData;
 }

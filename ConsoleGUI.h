@@ -22,9 +22,10 @@ public:
 	int DisplayStoresWithSearch();
 
 private:
-	std::vector<std::string> GetVectorOfStringsFromUser(std::string purpose);
-	std::vector<std::string> GetCustomDirectoryNames(Stores store);
-	bool GetYesOrNoFromUser(std::string aboutValue);
+	std::vector<std::string> GetVectorOfStringsFromUser(const std::string purpose) const;
+	std::string GetStringFromUser() const;
+	std::vector<std::string> GetCustomDirectoryNames(const Stores store) const;
+	bool GetYesOrNoFromUser(const std::string aboutValue) const;
 };
 
 #endif CONSOLE_GUI_HPP

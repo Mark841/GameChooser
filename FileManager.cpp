@@ -24,18 +24,18 @@ void FileManager::WriteLocalDataToFileAppend()
 	file.clear();
 	file.seekg(0, std::ios::end);
 
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	StoresFile* localFileData = algorithms->GetLocalData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	StoresFile* localFileData = backEndAlgorithms->GetLocalData();
 
 	file << localFileData->storeAmount << "\n";
 	file << localFileData->amountOfDrives << "\n";
-	file << algorithms->GetDriveNamesString() << "\n";
+	file << backEndAlgorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
-	groupLocations.push_back(algorithms->GetFolderLocationsStrings());
-	groupLocations.push_back(algorithms->GetStoreLocationsStrings());
-	groupLocations.push_back(algorithms->GetIsFolderOnDriveStrings());
-	groupLocations.push_back(algorithms->GetIsStoreOnDriveStrings());
+	groupLocations.push_back(backEndAlgorithms->GetFolderLocationsStrings());
+	groupLocations.push_back(backEndAlgorithms->GetStoreLocationsStrings());
+	groupLocations.push_back(backEndAlgorithms->GetIsFolderOnDriveStrings());
+	groupLocations.push_back(backEndAlgorithms->GetIsStoreOnDriveStrings());
 	// Between each group of data eg folders and stores will be a ? and between each folder will be a | 
 	for (std::vector<std::string> locations : groupLocations)
 	{
@@ -44,8 +44,8 @@ void FileManager::WriteLocalDataToFileAppend()
 			file << drive << "\n";
 		}
 	}
-	file << algorithms->GetNoOfFoldersOnDriveString() << "\n";
-	file << algorithms->GetNoOfStoresOnDriveString() << "\n";
+	file << backEndAlgorithms->GetNoOfFoldersOnDriveString() << "\n";
+	file << backEndAlgorithms->GetNoOfStoresOnDriveString() << "\n";
 	file << localFileData->lastPlayed << "\n";
 	file.close();
 }
@@ -61,18 +61,18 @@ void FileManager::WriteLocalDataToFileOverwrite()
 
 	file.clear();
 
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	StoresFile* localFileData = algorithms->GetLocalData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	StoresFile* localFileData = backEndAlgorithms->GetLocalData();
 
 	file << localFileData->storeAmount << "\n";
 	file << localFileData->amountOfDrives << "\n";
-	file << algorithms->GetDriveNamesString() << "\n";
+	file << backEndAlgorithms->GetDriveNamesString() << "\n";
 
 	std::vector<std::vector<std::string>> groupLocations;
-	groupLocations.push_back(algorithms->GetFolderLocationsStrings());
-	groupLocations.push_back(algorithms->GetStoreLocationsStrings());
-	groupLocations.push_back(algorithms->GetIsFolderOnDriveStrings());
-	groupLocations.push_back(algorithms->GetIsStoreOnDriveStrings());
+	groupLocations.push_back(backEndAlgorithms->GetFolderLocationsStrings());
+	groupLocations.push_back(backEndAlgorithms->GetStoreLocationsStrings());
+	groupLocations.push_back(backEndAlgorithms->GetIsFolderOnDriveStrings());
+	groupLocations.push_back(backEndAlgorithms->GetIsStoreOnDriveStrings());
 	// Between each group of data eg folders and stores will be a ? and between each folder will be a | 
 	for (std::vector<std::string> locations : groupLocations)
 	{
@@ -81,8 +81,8 @@ void FileManager::WriteLocalDataToFileOverwrite()
 			file << drive << "\n";
 		}
 	}
-	file << algorithms->GetNoOfFoldersOnDriveString() << "\n";
-	file << algorithms->GetNoOfStoresOnDriveString() << "\n";
+	file << backEndAlgorithms->GetNoOfFoldersOnDriveString() << "\n";
+	file << backEndAlgorithms->GetNoOfStoresOnDriveString() << "\n";
 	file << localFileData->lastPlayed << "\n";
 	file.close();
 }
@@ -90,8 +90,8 @@ void FileManager::WriteLocalDataToFileOverwrite()
 //TODO - make somewhere where it calls this
 void FileManager::WriteWhitelistsToFileAppend()
 {
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	std::vector<std::string> whitelists = algorithms->GetWhitelistData()->directoryNames;
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	std::vector<std::string> whitelists = backEndAlgorithms->GetWhitelistData()->directoryNames;
 
 	std::fstream file(WHITELIST_FILE_FILENAME);
 	file.open(WHITELIST_FILE_FILENAME, std::ios::app);
@@ -108,8 +108,8 @@ void FileManager::WriteWhitelistsToFileAppend()
 }
 void FileManager::WriteWhitelistsToFileOverwrite()
 {
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	std::vector<std::string> whitelists = algorithms->GetWhitelistData()->directoryNames;
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	std::vector<std::string> whitelists = backEndAlgorithms->GetWhitelistData()->directoryNames;
 
 	std::ofstream file(WHITELIST_FILE_FILENAME);
 	file.open(WHITELIST_FILE_FILENAME, std::ios::app);
@@ -126,8 +126,8 @@ void FileManager::WriteWhitelistsToFileOverwrite()
 }
 void FileManager::WriteCustomDirectoriesToFileOverwrite()
 {
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	CustomDirectoryData* customDirectories = algorithms->GetCustomDirectoryData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	CustomDirectoryData* customDirectories = backEndAlgorithms->GetCustomDirectoryData();
 	std::vector<std::vector<std::string>> allStores{
 	customDirectories->steamDirectories,
 	customDirectories->eaDirectories,
@@ -148,7 +148,7 @@ void FileManager::WriteCustomDirectoriesToFileOverwrite()
 }
 void FileManager::WriteLastPlayedGameToFileOverwrite(GameData game)
 {
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
 
 	std::ofstream file(LAST_PLAYED_GAME_FILE_FILENAME);
 	file.open(LAST_PLAYED_GAME_FILE_FILENAME, std::ios::out);
@@ -158,7 +158,7 @@ void FileManager::WriteLastPlayedGameToFileOverwrite(GameData game)
 		std::cout << "FILE NOT FOUND, CREATING A NEW FILE CALLED " << LAST_PLAYED_GAME_FILE_FILENAME << " OR PLEASE CLOSE THE " << LAST_PLAYED_GAME_FILE_FILENAME << " FILE" << std::endl;
 	}
 
-	WriteToFile(&file, algorithms->GetGameValues(game));
+	WriteToFile(&file, backEndAlgorithms->GetGameValues(game));
 
 	file.close();
 }
@@ -167,8 +167,8 @@ void FileManager::WriteLastPlayedGameToFileOverwrite(GameData game)
 void FileManager::ReadLocalDataFromFile()
 {
 	std::fstream file(LOCAL_DATA_FILE_FILENAME);
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	StoresFile* localFileData = algorithms->GetLocalData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	StoresFile* localFileData = backEndAlgorithms->GetLocalData();
 
 	file.open(LOCAL_DATA_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 
@@ -213,8 +213,8 @@ void FileManager::ReadLocalDataFromFile()
 void FileManager::ReadWhitelistDataFromFile()
 {
 	std::fstream file(WHITELIST_FILE_FILENAME);
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	WhitelistData* whitelistData = algorithms->GetWhitelistData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	WhitelistData* whitelistData = backEndAlgorithms->GetWhitelistData();
 
 	file.open(WHITELIST_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -244,8 +244,8 @@ void FileManager::ReadWhitelistDataFromFile()
 void FileManager::ReadCustomDirectoriesDataFromFile()
 {
 	std::fstream file(CUSTOM_DIRECTORY_FILE_FILENAME);
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
-	CustomDirectoryData* customDirectoryData = algorithms->GetCustomDirectoryData();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
+	CustomDirectoryData* customDirectoryData = backEndAlgorithms->GetCustomDirectoryData();
 
 	file.open(CUSTOM_DIRECTORY_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -284,7 +284,7 @@ void FileManager::ReadCustomDirectoriesDataFromFile()
 void FileManager::ReadLastPlayedGameFromFile()
 {
 	std::fstream file(LAST_PLAYED_GAME_FILE_FILENAME);
-	BackEndAlgorithms* algorithms = BackEndAlgorithms::GetInstance();
+	BackEndAlgorithms* backEndAlgorithms = BackEndAlgorithms::GetInstance();
 
 	file.open(LAST_PLAYED_GAME_FILE_FILENAME, std::fstream::in | std::fstream::out | std::fstream::trunc);
 	if (!file.is_open())
@@ -296,10 +296,10 @@ void FileManager::ReadLastPlayedGameFromFile()
 	file.seekg(0, std::ios::beg);
 
 	std::vector<std::string> gameData = ReadLinesFromFile(&file);
-	GameData* game = algorithms->GetLastPlayedGameData();
+	GameData* game = backEndAlgorithms->GetLastPlayedGameData();
 	if (gameData.size() > 0)
 	{
-		*game = algorithms->SetGameDataValues(gameData);
+		*game = backEndAlgorithms->SetGameDataValues(gameData);
 	}
 
 	file.close();
