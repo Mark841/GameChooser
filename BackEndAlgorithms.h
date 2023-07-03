@@ -100,6 +100,8 @@ public:
 		}
 	}
 
+	bool Replace(std::string& str, const std::string& from, const std::string& to);
+
 	template <typename T> std::string ToString(const T& t) { return std::to_string(t); }
 	std::string ToString(const std::string& t) { return t; }
 	std::string ToString(const Stores& store)

@@ -389,7 +389,6 @@ std::vector<SearchGameData> BackEndAlgorithms::SearchStores(const std::string ga
 SearchGameData* BackEndAlgorithms::SearchStore(const Stores& storeName, std::string gameName)
 {
     // Replace any spaces in the URL with a +
-    std::replace(gameName.begin(), gameName.end(), ' ', '+');
 
     SearchGameData* resultData = new SearchGameData();
     // --- STEAM ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -413,6 +412,19 @@ SearchGameData* BackEndAlgorithms::SearchStore(const Stores& storeName, std::str
         EpicSearch(gameName, resultData);
     }
     return resultData;
+}
+
+// Retrieved this method from https://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
+bool BackEndAlgorithms::Replace(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = str.find(from);
+    
+    if (start_pos == std::string::npos)
+    {
+        return false;
+    }
+
+    str.replace(start_pos, from.length(), to);
+    return true;
 }
 
 // --------------------------- Private ---------------------------------------------------------------------------------------------------------------------------------------
@@ -809,15 +821,16 @@ void BackEndAlgorithms::AllStores(StoresFile* localData, const int driveIndex, i
 
 bool BackEndAlgorithms::SteamSearch(std::string gameName, SearchGameData* resultData)
 {
+    std::replace(gameName.begin(), gameName.end(), ' ', '+');
     std::string searchURL = STEAM_SEARCH_URL + gameName;
     std::replace(gameName.begin(), gameName.end(), '+', ' ');
 
     CURLplusplus client;
     std::string result = client.Get(searchURL).substr(59600, 7500);
     std::string result2 = BackEndAlgorithms::ToLower(result);
-    int startSearchIndex = result2.find(gameName) - 150;
+    int startSearchIndex = result2.find(gameName) - 1250;
     startSearchIndex = (startSearchIndex <= 0) ? 0 : startSearchIndex;
-    int finalIndex = startSearchIndex + 2500;
+    int finalIndex = startSearchIndex + 3000;
 
     int urlStartIndex = result.find("href", startSearchIndex) + 6;                              // Plus 6 for the 'href="' at start of the span tag
     int urlEndIndex = result.find("\r\n", urlStartIndex) - 1;                                   // Minus 1 for the '<' at start of the span tag
@@ -858,15 +871,68 @@ bool BackEndAlgorithms::SteamSearch(std::string gameName, SearchGameData* result
 
     return resultData;
 }
+// TODO
 bool BackEndAlgorithms::EASearch(std::string gameName, SearchGameData* resultData)
 {
     return resultData;
 }
+// TODO
 bool BackEndAlgorithms::UbisoftSearch(std::string gameName, SearchGameData* resultData)
 {
     return resultData;
 }
+// TODO
 bool BackEndAlgorithms::EpicSearch(std::string gameName, SearchGameData* resultData)
 {
+    std::string searchGameName = gameName; 
+    Replace(searchGameName, " ", "\%20");
+    std::string searchURL = EPIC_SEARCH_URL_BEGIN + searchGameName + EPIC_SEARCH_URL_END;
+
+    CURLplusplus client;
+    std::string result = client.Get(searchURL);
+    std::string result2 = BackEndAlgorithms::ToLower(result);
+    int startSearchIndex = result2.find(gameName) - 1250;
+    startSearchIndex = (startSearchIndex <= 0) ? 0 : startSearchIndex;
+    int finalIndex = startSearchIndex + 3000;
+
+    std::cout << result << std::endl;
+
+    int urlStartIndex = result.find("href", startSearchIndex) + 6;                              // Plus 6 for the 'href="' at start of the span tag
+    int urlEndIndex = result.find("\r\n", urlStartIndex) - 1;                                   // Minus 1 for the '<' at start of the span tag
+    resultData->webUrl = (urlStartIndex > finalIndex) ? NULL : result.substr(urlStartIndex, urlEndIndex - urlStartIndex);                   // If the found item would be after the end of the game's section of the code then set to NULL
+
+    int nameStartIndex = result.find("title", startSearchIndex) + 7;                            // Plus 7 for the 'title="' at start of the span tag
+    int nameEndIndex = result.find("/span", nameStartIndex) - 1;                                // Minus 1 for the '<' at start of the span tag
+    resultData->gameName = (nameStartIndex > finalIndex) ? NULL : result.substr(nameStartIndex, nameEndIndex - nameStartIndex);               // If the found item would be after the end of the game's section of the code then set to NULL
+
+    int priceStartIndex = result.find("data-price-final", startSearchIndex) + 18;               // Plus 18 for the 'data-price-final="' in the tag
+    int priceEndIndex = result.find("\"", priceStartIndex);
+    std::string price = result.substr(priceStartIndex, priceEndIndex - priceStartIndex);
+    price = price.substr(0, price.length() - 2) + "." + price.substr(price.length() - 2);
+    try
+    {
+        resultData->price = (priceStartIndex > finalIndex) ? NULL : std::stod(price);               // If the found item would be after the end of the game's section of the code then set to NULL
+    }
+    catch (...)
+    {
+        resultData->price = NULL;
+    }
+
+    int discountStartIndex = result.find("search_discount", startSearchIndex);
+    int discountSpanIndex = result.find("span", discountStartIndex) + 5;       // Plus 5 for the 'span>' in the tag
+    if (discountStartIndex != 0 && discountStartIndex <= finalIndex && discountSpanIndex < discountStartIndex + 100)
+    {
+        int discountEndIndex = result.find("/span", discountSpanIndex) - 1;    // Minus 1 for the '<' at start of the span tag
+        std::string discount = result.substr(discountSpanIndex, discountEndIndex - discountSpanIndex);
+        try
+        {
+            resultData->discount = std::abs(std::stod(discount));
+        }
+        catch (...)
+        {
+            resultData->discount = NULL;
+        }
+    }
+
     return resultData;
 }

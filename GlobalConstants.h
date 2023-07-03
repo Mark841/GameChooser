@@ -14,10 +14,11 @@ const std::string LAST_PLAYED_GAME_FILE_FILENAME = "LastPlayedGameData.txt";
 const std::string STEAMAPPS_COMMON = "\\steamapps\\common";
 
 const std::string STEAM_SEARCH_URL = "https://store.steampowered.com/search/?term=";
-const std::string ORIGIN_SEARCH_URL = "https://www.origin.com/gbr/en-us/search?searchString=";
-const std::string UBISOFT_SEARCH_URL = "https://store.ubi.com/uk/search?q=";
-const std::string UBISOFT_SEARCH_END_URL = "&prefn1=productTypeRefinementString&prefv1=games";
-const std::string EPIC_SEARCH_URL = "https://www.epicgames.com/store/en-US/store-search?q=";
+//const std::string ORIGIN_SEARCH_URL = "https://www.origin.com/gbr/en-us/search?searchString=";
+const std::string UBISOFT_SEARCH_URL_BEGIN = "https://store.ubi.com/uk/search?q=";
+const std::string UBISOFT_SEARCH_URL_END = "&prefn1=productTypeRefinementString&prefv1=games";
+const std::string EPIC_SEARCH_URL_BEGIN = "https://store.epicgames.com/en-US/browse?q=";
+const std::string EPIC_SEARCH_URL_END = "&sortBy=relevancy&sortDir=DESC&count=40";
 
 constexpr int NUMBER_OF_STORES = 4;
 constexpr int MAX_DIRECTORY_DEPTH = 6;
